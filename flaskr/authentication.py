@@ -119,9 +119,23 @@ def login():
             
             # url_for automatially generates a url for based on name
             # redirect then redirects the user to that url
+            # If the user is logged in, then their information should be loaded and made available to other views
             return redirect(url_for('index'))
 
         # Flash stores messages that can be retrieved when rendering the template
         flash(error)
 
     return render_template('auth/login.html')
+
+# Registers a method that runs before the view function, regardless of requested url
+@blueprint.before_app_request
+def load_logged_in_user():
+    # user_id is stored as a cookie for the session
+    user_id = session.get('user_id')
+
+    if user_id is None: # If user is not logged in, then set g.user to none
+        g.user = None
+    else: # if user has been logged in, then retrieve their user information from the database
+        g.user = get_db().execute(
+            'SELECT * FROM user WHERE id = ?', (user_id,)
+        ).fetchone()
