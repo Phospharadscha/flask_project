@@ -1,5 +1,4 @@
 import os
-
 from flask import Flask
 
 
@@ -35,11 +34,16 @@ def create_app(test_config=None):
     
     @app.route('/hello')
     def hello():
-        """_summary_
-
-    Returns:
-        _type_: _description_
-    """
+        """Test function atm. 
+        Creates a simple applciation. 
+        """
         return 'Hello, World!'
+    
+    # Import and call the method init_app() from db.py
+    # This registers two functions with the application
+    # - app.teardown_appcontext(close_db)   
+    # - app.cli.add_command(init_db_command)
+    from . import db
+    db.init_app(app)
 
     return app
