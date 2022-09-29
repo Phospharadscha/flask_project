@@ -26,7 +26,24 @@ def get_db():
 
 
 def close_db(e=None):
+    """Checks if a connection has been created.
+    Does this by checking if g.db is defined. 
+    If connection exists, then close the connection.
+    """
     db = g.pop('db', None)
 
     if db is not None:
         db.close()
+        
+def init_db():
+    db = get_db()
+
+    with current_app.open_resource('schema.sql') as f:
+        db.executescript(f.read().decode('utf8'))
+
+
+@click.command('init-db')
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo('Initialized the database.')
