@@ -1,0 +1,29 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Will display the title of the post-->
+{% block header %}
+  <h1>{% block title %}Edit "{{ post['title'] }}"{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--
+This content block has two forms. 
+
+The first, update, posts the edited data to the current page. Updates the post. 
+The second, is a button which allows the user to delete the post instead. 
+-->
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="title" id="title"
+      value="{{ request.form['title'] or post['title'] }}" required>
+    <label for="body">Body</label>
+    <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  
+{% endblock %}
