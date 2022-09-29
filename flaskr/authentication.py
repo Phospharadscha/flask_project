@@ -30,7 +30,7 @@ blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 
 @blueprint.route('/register', methods=('GET', 'POST'))   # Associates the '/register/ url with the register view function
 def register():
-    """When the user visits '/auth/register' the register returns a HTML with form for registration.
+    """When the user visits '/auth/register' the view returns a HTML with form for registration.
     When a form is submitted, it will validate input and either show the form again, or create a new user.
     This does not include the HMTL template. 
     """
@@ -63,7 +63,7 @@ def register():
                 # The database library will automatically protect from SQL injection 
                 database.execute( 
                     "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    (username, generate_password_hash(password)), # Password is hashed for security
                 )
                 database.commit() # Commit changes to the database
             except database.IntegrityError: # If username is already in use
@@ -78,3 +78,50 @@ def register():
 
     # renders a template containing the HTML
     return render_template('auth/register.html')
+
+@blueprint.route('/login', methods=('GET', 'POST'))
+def login():
+    """When the user visits '/auth/login' the view returns a HTML with a form for logging in.
+    When a form is submitted, it will validate input and either show the form again, or log the user in.
+    This does not include the HMTL template. 
+    """
+    
+    if request.method == 'POST': # If user submitted form   
+        # request.form[] is a type of dictionary mapping. 
+        username = request.form['username']
+        password = request.form['password']
+        
+        # Retrieve the database for storing user information
+        database = get_database()
+        
+        # Will store any error from the result of input validation
+        error = None
+        
+        # Retrieve user information
+        # SELECT [ALL] FROM the user table WHERE the username field = the provided username
+        user = database.execute(
+            'SELECT * FROM user WHERE username = ?', (username,)
+        ).fetchone()
+
+        
+        if user is None: # A matching user could not be found
+            error = 'Incorrect username.'
+        elif not check_password_hash(user['password'], password): # Password is hashed and checks if it matches what is stored
+            error = 'Incorrect password.' # The user could be found, but the password is incorrect
+        
+        # Login was successful 
+        if error is None:
+            # session is a dictionary that stores data across requests
+            # When validation succeeds the user id is stored in a new session. 
+            # Data is stored in a cookie that is sent to the browser, before being sent back with subsequent request
+            session.clear()
+            session['user_id'] = user['id']
+            
+            # url_for automatially generates a url for based on name
+            # redirect then redirects the user to that url
+            return redirect(url_for('index'))
+
+        # Flash stores messages that can be retrieved when rendering the template
+        flash(error)
+
+    return render_template('auth/login.html')
