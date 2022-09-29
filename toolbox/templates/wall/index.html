@@ -8,7 +8,7 @@
 {% block header %}
   <h1>{% block title %}Walls{% endblock %}</h1>
   {% if g.user %}
-      <a class="action" href="{{ url_for('wall.create', r_id=room_id) }}">New</a>
+    <a class="action" href="{{ url_for('wall.create', r_id=room_id) }}">New</a>
   {% endif %}
 {% endblock %}
 

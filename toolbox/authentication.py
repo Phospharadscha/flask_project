@@ -134,7 +134,7 @@ def logout():
     Once logged out, load_logged_in_user won't load a user on later requests
     """
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('auth.login'))
 
 # Registers a function that runs before the view function, regardless of requested url
 @blueprint.before_app_request

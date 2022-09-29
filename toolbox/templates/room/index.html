@@ -6,9 +6,9 @@
 <!--Userful pattern: Place the title in the header-->
 <!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
 {% block header %}
-  <h1>{% block title %}Rooms{% endblock %}</h1>
+  <h1>{% block title %}{{c_name['name']}} Rooms{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('room.create', id=calculator_id) }}">New</a>
+    <a class="action" href="{{ url_for('room.create', c_id=calculator_id) }}">New</a>
   {% endif %}
 {% endblock %}
 

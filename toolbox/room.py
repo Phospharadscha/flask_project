@@ -26,8 +26,8 @@ blueprint = Blueprint('room', __name__)
 ######################################## views ##########################################
 #########################################################################################
 
-@blueprint.route('/<int:id>/room', methods=['GET', 'POST']) # The '/' will lead to this function
-def index(id):
+@blueprint.route('/<int:c_id>/room', methods=['GET', 'POST']) # The '/' will lead to this function
+def index(c_id):
     """The Index will display all posts, as outlined above
     """
     database = get_database() # Retrieve a connection to the database
@@ -38,14 +38,21 @@ def index(id):
         'SELECT r.id, calculator_id, r.name'
         ' FROM room r JOIN calculator c ON r.calculator_id = c.id'
         ' WHERE c.id = ? ORDER BY r.id DESC',
-        (id,)
+        (c_id,)
     ).fetchall()
+    
+    calculator = get_database().execute(
+        'SELECT c.name'
+        ' FROM calculator c JOIN room r ON r.calculator_id = c.id'
+        ' WHERE c.id = ?',
+        (c_id,)
+    ).fetchone()
     # Returns a command to render the specified template, and passes it the posts as a parameter. 
-    return render_template('room/index.html', rooms=rooms, calculator_id=id)
+    return render_template('room/index.html', rooms=rooms, calculator_id=c_id, c_name=calculator)
 
-@blueprint.route('/<int:id>/room/create', methods=('GET', 'POST'))
+@blueprint.route('/<int:c_id>/room/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
-def create(id):
+def create(c_id):
     """The view used to allow users to create posts.
     Users must be logged in to create a post. 
     """
@@ -76,7 +83,7 @@ def create(id):
             database.commit()
             
             # Redirect the user back to the index page
-            return redirect(url_for('room.index', id=id))
+            return redirect(url_for('room.index', c_id=id))
 
     # If it was unsucessful, then return the user back to the create page
     return render_template('room/create.html')
@@ -95,7 +102,7 @@ def update(c_id, r_id):
 
         # If no title is given then that is an error
         if not name:
-            return redirect(url_for('room.index', id=c_id))
+            return redirect(url_for('room.index', c_id=c_id))
 
         if error is not None:
             flash(error)
@@ -114,7 +121,7 @@ def update(c_id, r_id):
             database.commit()
             
             # redirect the user back to the index
-            return redirect(url_for('room.index', id=c_id))
+            return redirect(url_for('room.index', c_id=c_id))
 
     # If the post could not be updated, then redirect them back to the update page again
     return render_template('room/update.html', room=room, calculator_id=c_id)
@@ -133,7 +140,7 @@ def delete(c_id, r_id):
     database.commit()
     
     # When a post has been deleted, redirect to the index
-    return redirect(url_for('room.index', id=c_id))
+    return redirect(url_for('room.index', c_id=c_id))
 
 #########################################################################################
 ######################################## Functions ######################################
