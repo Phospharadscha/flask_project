@@ -1,0 +1,37 @@
+<!--The primary webpage, displays user posts-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Userful pattern: Place the title in the header-->
+<!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
+{% block header %}
+  <h1>{% block title %}Calculators{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('calculator.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--
+If the user is an author of the post, then they are given the option to edit it. 
+loop.last is used inside Jinja to display a line after each posts, except the last one. 
+-->
+{% block content %}
+  {% for calculator in calculators %}
+    <article class="calculator">
+      <header>
+        <div>
+          <h1>{{ calculator['name'] }}</h1>
+        </div>
+        {% if g.user['id'] == calculator['author_id'] %}
+          <a class="action" href="{{ url_for('room.index', id=calculator['id']) }}">Populate</a>
+          <a class="action" href="{{ url_for('calculator.update', id=calculator['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

@@ -12,7 +12,7 @@
 <!doctype html>
 
 
-<title>{% block title %}{% endblock %} - Tester</title>
+<title>{% block title %}{% endblock %} - Toolbox</title>
 
 <!--Conatains a link to the style.css file-->
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -24,7 +24,7 @@ This contains the error messages that may have been flashed in the blueprints.
 If there are any flashed messages, then they will be displayed by this code. 
 -->
 <nav>
-  <h1>Tester</h1>
+  <h1>Toolbox</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>

@@ -5,7 +5,7 @@
 <!--Everything within this block will be placed in the header section of the base template-->
 <!--Will display the title of the post-->
 {% block header %}
-  <h1>{% block title %}Edit "{{ post['title'] }}"{% endblock %}</h1>
+  <h1>{% block title %}Edit "{{ room['name'] }}"{% endblock %}</h1>
 {% endblock %}
 
 <!--Replaces the content block of base.hmtl-->
@@ -17,15 +17,12 @@ The second, is a button which allows the user to delete the post instead.
 -->
 {% block content %}
   <form method="post">
-    <label for="title">Title</label>
-    <input name="title" id="title"
-      value="{{ request.form['title'] or post['title'] }}" required>
-    <label for="body">Body</label>
-    <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
+    <label for="name">Room name (Leave empty if you do not wish to update):</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}">
     <input type="submit" value="Save">
   </form>
   <hr>
-  <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
+  <form action="{{ url_for('room.delete', c_id=calculator_id, r_id=room['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');"> <!--Uses javascript to display a delete prompt-->
   </form>
 {% endblock %}

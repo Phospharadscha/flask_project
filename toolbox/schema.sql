@@ -1,6 +1,11 @@
 -- Remove the tables if they already exist 
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
+DROP TABLE IF EXISTS paint;
+DROP TABLE IF EXISTS calculator;
+DROP TABLE IF EXISTS room;
+DROP TABLE IF EXISTS wall;
+DROP TABLE IF EXISTS obstacle;
 
 -- Create a table to store users
 -- A user is defined by a primary key, which is the ID. This id increments with every new user
@@ -12,18 +17,44 @@ CREATE TABLE user (
   admin INTEGER NOT NULL 
 );
 
--- Create a table to store posts
--- Posts are defined by a primary integer key
--- They have an author id, which will match an id in the user table
--- created, which is a timestamp marking when the post was made
--- title, which stores the title of the post
--- body, which stores the content of the post
--- The foreign key used here links a post to a given user in the user table
-CREATE TABLE post (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
+CREATE TABLE paint (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  name TEXT UNIQUE NOT NULL,
+  price REAL NOT NULL,
+  volume REAL NOT NULL,
+  coverage REAL NOT NULL
+);
+
+CREATE TABLE calculator (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  author_id INTEGER NOT NULL, 
+  name TEXT NOT NULL, 
   FOREIGN KEY (author_id) REFERENCES user (id)
+);
+
+CREATE TABLE room (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  calculator_id INTEGER NOT NULL, 
+  name TEXT NOT NULL, 
+  FOREIGN KEY (calculator_id) REFERENCES calculator (id)
+);
+
+CREATE TABLE wall (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  room_id INTEGER NOT NULL, 
+  paint_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  shape TEXT NOT NULL,  
+  surface REAL NOT NULL,
+  FOREIGN KEY (room_id) REFERENCES room (id),
+  FOREIGN KEY (paint_id) REFERENCES paint (id)
+);
+
+CREATE TABLE obstacle (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+  wall_id INTEGER NOT NULL, 
+  name TEXT NOT NULL,
+  shape TEXT NOT NULL,  
+  surface REAL NOT NULL, 
+  FOREIGN KEY (wall_id) REFERENCES wall (id)
 );

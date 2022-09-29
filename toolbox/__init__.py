@@ -38,21 +38,23 @@ def create_app(test_config=None):
         pass
     
     # Import modules from the root directory
-    from . import database, authentication, blog
+    from . import database, authentication, calculator, room
     
     # This registers two functions with the application: 
     # - app.teardown_appcontext(close_db)   
     # - app.cli.add_command(init_db_command)
     database.init_app(app)
     
-    # Import and register blueprints
-    app.register_blueprint(authentication.blueprint)
-    
-    app.register_blueprint(blog.blueprint)
+    app.register_blueprint(calculator.blueprint)
     # Blog does not have a url_prefix, so the index will be at '/'
     # This makes the blog index the main index
     #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for('blog.index') both generate the same url
     app.add_url_rule('/', endpoint='index') 
+    
+    # Import and register blueprints
+    app.register_blueprint(authentication.blueprint)
+      
+    app.register_blueprint(room.blueprint)
 
 
     return app
