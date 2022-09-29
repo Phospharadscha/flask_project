@@ -28,14 +28,14 @@ blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 ###################################### Views ############################################
 #########################################################################################
 
-@blueprint.route('/register', methods=('GET', 'POST'))   # Associates the '/register/ url with the register view function
+@blueprint.route('/register', functions=('GET', 'POST'))   # Associates the '/register/ url with the register view function
 def register():
     """When the user visits '/auth/register' the view returns a HTML with form for registration.
     When a form is submitted, it will validate input and either show the form again, or create a new user.
     This does not include the HMTL template. 
     """
     
-    if request.method == 'POST':   # If user submitted the form
+    if request.function == 'POST':   # If user submitted the form
         # request.form[] is a type of dictionary mapping. 
         username = request.form['username']
         password = request.form['password']
@@ -79,14 +79,14 @@ def register():
     # renders a template containing the HTML
     return render_template('auth/register.html')
 
-@blueprint.route('/login', methods=('GET', 'POST'))
+@blueprint.route('/login', functions=('GET', 'POST'))
 def login():
     """When the user visits '/auth/login' the view returns a HTML with a form for logging in.
     When a form is submitted, it will validate input and either show the form again, or log the user in.
     This does not include the HMTL template. 
     """
     
-    if request.method == 'POST': # If user submitted form   
+    if request.function == 'POST': # If user submitted form   
         # request.form[] is a type of dictionary mapping. 
         username = request.form['username']
         password = request.form['password']
@@ -136,7 +136,7 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-# Registers a method that runs before the view function, regardless of requested url
+# Registers a function that runs before the view function, regardless of requested url
 @blueprint.before_app_request
 def load_logged_in_user():
     # user_id is stored as a cookie for the session
@@ -145,6 +145,31 @@ def load_logged_in_user():
     if user_id is None: # If user is not logged in, then set g.user to none
         g.user = None
     else: # if user has been logged in, then retrieve their user information from the database
-        g.user = get_db().execute(
+        g.user = get_database().execute(
             'SELECT * FROM user WHERE id = ?', (user_id,)
         ).fetchone()
+        
+#########################################################################################
+###################################### Decorator ########################################
+#########################################################################################
+
+def login_required(view):
+    """Creating, updating, or deleting a blog post requires the user to be logged in. 
+    This, when applied to a view, can check if the user is logged in.
+    This is a decorator, which wraps around a provided view function.
+    """
+    
+    # Returns a new view function which wraps the original one it is applied to. 
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        """Checks if a user is loaded. 
+        If they are not, then they are redirected to the login screen.
+        If they are loaded, then the originally requested view (page) is loaded as expected"""
+        if g.user is None:
+            # redirect them to the login page instead
+            return redirect(url_for('auth.login'))
+
+        # Return the expected view
+        return view(**kwargs)
+
+    return wrapped_view
