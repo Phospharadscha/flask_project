@@ -127,6 +127,15 @@ def login():
 
     return render_template('auth/login.html')
 
+@blueprint.route('/logout')
+def logout():
+    """A view for logging the user out.
+    To log out, the session is cleared. This remvoes the user id from the cookies. 
+    Once logged out, load_logged_in_user won't load a user on later requests
+    """
+    session.clear()
+    return redirect(url_for('index'))
+
 # Registers a method that runs before the view function, regardless of requested url
 @blueprint.before_app_request
 def load_logged_in_user():
