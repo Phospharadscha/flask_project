@@ -130,7 +130,21 @@ def update(id):
     # If the post could not be updated, then redirect them back to the update page again
     return render_template('blog/update.html', post=post)
 
-
+@blueprint.route('/<int:id>/delete', methods=('POST',))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def delete(id):
+    # Retrieves the post by the specified id
+    get_post(id) # If the post cannot be found, then the blueprint aborts. 
+    
+    # Get a connection to the database
+    database = get_database()
+    
+    # From the post table, delete every post where the id equally the supplied id
+    database.execute('DELETE FROM post WHERE id = ?', (id,))
+    database.commit()
+    
+    # When a post has been deleted, redirect to the index
+    return redirect(url_for('blog.index'))
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
