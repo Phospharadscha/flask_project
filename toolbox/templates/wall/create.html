@@ -1,0 +1,20 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+{% block header %}
+  <h1>{% block title %}New Wall{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--input tags are required, which will prevent the browser from submitting the form until they are filled.-->
+<!--The content block retrieves the login information from the user.
+This is requested in the blog blueprint-->
+{% block content %}
+  <form method="post">
+    <label for="name">Wall name:</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}" required>
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}

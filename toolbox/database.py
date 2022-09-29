@@ -1,7 +1,7 @@
 #########################################################################################
 #################################### Imports ############################################
 #########################################################################################
-
+from werkzeug.security import generate_password_hash
 import sqlite3 # Import support for an SQLite database
 
 import click
@@ -69,4 +69,16 @@ def init_database_command():
     If this works, then it displays a success message, as shown below.
     """
     init_database()
+    
+     # If there was no error, then get a connection to the database
+    database = get_database()
+    
+    # Insert the post into the post table within the database 
+    database.execute(
+        'INSERT INTO user (username, password, admin)'
+        ' VALUES (?, ?, ?)',
+        ('admin', generate_password_hash('admin'), 1)
+    )
+    database.commit()
+    
     click.echo('Initialized the database.')

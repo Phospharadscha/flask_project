@@ -38,7 +38,7 @@ def create_app(test_config=None):
         pass
     
     # Import modules from the root directory
-    from . import database, authentication, calculator, room
+    from . import database, authentication, paint, calculator, room, wall
     
     # This registers two functions with the application: 
     # - app.teardown_appcontext(close_db)   
@@ -51,10 +51,15 @@ def create_app(test_config=None):
     #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for('blog.index') both generate the same url
     app.add_url_rule('/', endpoint='index') 
     
+        
+    app.register_blueprint(paint.blueprint)
+    
     # Import and register blueprints
     app.register_blueprint(authentication.blueprint)
       
     app.register_blueprint(room.blueprint)
+    
+    app.register_blueprint(wall.blueprint)
 
 
     return app
