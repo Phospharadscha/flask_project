@@ -24,7 +24,6 @@ def get_db():
     # Return the database retrieved by the connection 
     return g.db
 
-
 def close_db(e=None):
     """Checks if a connection has been created.
     Does this by checking if g.db is defined. 
@@ -36,14 +35,31 @@ def close_db(e=None):
         db.close()
         
 def init_db():
+    """Initalises the database which will be used by the application.
+    """
+    # Call the get_db() method to retrieve a database connection
+    # This connection is used to read in the database as a dictionary
     db = get_db()
 
+    # Opens a file relative to the flaskr package. 
+    # This means it should work no matter where the project is deployed
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
+        
+def init_app(app):
+    """close_db and init_db_command need to be registered with the application instance.
+    However, this uses a factory function, so there is no available instance.
+    Instead, this function takes the application and does the registration.
+    """
+
+    app.teardown_appcontext(close_db)   # Tells Flask to call that function when cleaning up after returning response
+    app.cli.add_command(init_db_command)   # Adds a new command to the command line, which can be called with the 'flask' command
 
 
 @click.command('init-db')
 def init_db_command():
-    """Clear the existing data and create new tables."""
+    """Defines a command line command called init-db, which calls the init_db() method.
+    If this works, then it displays a success message, as shown below.
+    """
     init_db()
     click.echo('Initialized the database.')
