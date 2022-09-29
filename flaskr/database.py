@@ -9,7 +9,7 @@ from flask import current_app, g
 
 
 #########################################################################################
-#################################### Methods ############################################
+#################################### functions ############################################
 #########################################################################################
 
 def get_database():
@@ -45,7 +45,7 @@ def close_database(e=None):
 def init_database():
     """Initalises the database which will be used by the application.
     """
-    # Call the get_db() method to retrieve a database connection
+    # Call the get_db() function to retrieve a database connection
     # This connection is used to read in the database as a dictionary
     database = get_database()
 
@@ -65,7 +65,7 @@ def init_app(app):
 
 @click.command('init-db')
 def init_database_command():
-    """Defines a command line command called init-db, which calls the init_db() method.
+    """Defines a command line command called init-db, which calls the init_db() function.
     If this works, then it displays a success message, as shown below.
     """
     init_database()

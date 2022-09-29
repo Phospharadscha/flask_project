@@ -12,6 +12,12 @@ CREATE TABLE user (
 );
 
 -- Create a table to store posts
+-- Posts are defined by a primary integer key
+-- They have an author id, which will match an id in the user table
+-- created, which is a timestamp marking when the post was made
+-- title, which stores the title of the post
+-- body, which stores the content of the post
+-- The foreign key used here links a post to a given user in the user table
 CREATE TABLE post (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   author_id INTEGER NOT NULL,
