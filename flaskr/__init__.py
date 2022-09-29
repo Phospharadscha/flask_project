@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 
+from . import authentication, database
+
 
 def create_app(test_config=None):
     """Create and configure the app. 
@@ -40,15 +42,15 @@ def create_app(test_config=None):
         return 'Hello, World!'
     
     # Import modules from the root directory
-    from . import db, auth
+    from . import database, authentication
     
     # This registers two functions with the application: 
     # - app.teardown_appcontext(close_db)   
     # - app.cli.add_command(init_db_command)
-    db.init_app(app)
+    database.init_app(app)
     
     # Import the authentication blueprint 
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(authentication.blueprint)
 
 
     return app
