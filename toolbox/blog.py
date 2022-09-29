@@ -7,8 +7,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
-from flaskr.authentication import login_required
-from flaskr.database import get_database
+from toolbox.authentication import login_required
+from toolbox.database import get_database
 
 
 #########################################################################################

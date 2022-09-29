@@ -20,7 +20,7 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(    # The path where teh SQLite database file will be saved
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        DATABASE=os.path.join(app.instance_path, 'toolbox.sqlite'),
     )
 
     """If a test config is given, then override the default configuration. 
@@ -36,14 +36,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)  # Ensure instance folder exists
     except OSError:
         pass
-
-    
-    @app.route('/hello')
-    def hello():
-        """Test function atm. 
-        Creates a simple applciation. 
-        """
-        return 'Hello, World!'
     
     # Import modules from the root directory
     from . import database, authentication, blog

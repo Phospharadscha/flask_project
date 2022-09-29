@@ -4,7 +4,7 @@
 
 import functools # Higher order functions and operations on callable objects
 from werkzeug.security import check_password_hash, generate_password_hash # Security related functions
-from flaskr.database import get_database # Import the function to get a connection to the database
+from toolbox.database import get_database # Import the function to get a connection to the database
 
 # A blueprint is a way to organize a group of related views, or other code.
 from flask import (
@@ -62,8 +62,8 @@ def register():
                 # ? are placeholders for user input, tuple is what to replace the placeholders with
                 # The database library will automatically protect from SQL injection 
                 database.execute( 
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)), # Password is hashed for security
+                    "INSERT INTO user (username, password, admin) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), 0), # Password is hashed for security
                 )
                 database.commit() # Commit changes to the database
             except database.IntegrityError: # If username is already in use

@@ -49,7 +49,7 @@ def init_database():
     # This connection is used to read in the database as a dictionary
     database = get_database()
 
-    # Opens a file relative to the flaskr package. 
+    # Opens a file relative to the toolbox package. 
     # This means it should work no matter where the project is deployed
     with current_app.open_resource('schema.sql') as file:
         database.executescript(file.read().decode('utf8'))
