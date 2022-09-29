@@ -8,7 +8,7 @@ from flask import (
 )
 
 """Creates a Flask blueprint named 'auth'. 
-This will be used for authentication of users. 
+This will be used for authentication of users and to allow logging in and out.  
 
 It needs to know where it is defined, so it is passed the __name__.
 url_prefix is put at the start of all urls associated with authentication
