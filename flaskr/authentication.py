@@ -28,14 +28,14 @@ blueprint = Blueprint('auth', __name__, url_prefix='/auth')
 ###################################### Views ############################################
 #########################################################################################
 
-@blueprint.route('/register', functions=('GET', 'POST'))   # Associates the '/register/ url with the register view function
+@blueprint.route('/register', methods=('GET', 'POST'))   # Associates the '/register/ url with the register view function
 def register():
     """When the user visits '/auth/register' the view returns a HTML with form for registration.
     When a form is submitted, it will validate input and either show the form again, or create a new user.
     This does not include the HMTL template. 
     """
     
-    if request.function == 'POST':   # If user submitted the form
+    if request.method == 'POST':   # If user submitted the form
         # request.form[] is a type of dictionary mapping. 
         username = request.form['username']
         password = request.form['password']
@@ -77,16 +77,16 @@ def register():
         flash(error)
 
     # renders a template containing the HTML
-    return render_template('auth/register.html')
+    return render_template('authentication/register.html')
 
-@blueprint.route('/login', functions=('GET', 'POST'))
+@blueprint.route('/login', methods=('GET', 'POST'))
 def login():
     """When the user visits '/auth/login' the view returns a HTML with a form for logging in.
     When a form is submitted, it will validate input and either show the form again, or log the user in.
     This does not include the HMTL template. 
     """
     
-    if request.function == 'POST': # If user submitted form   
+    if request.method == 'POST': # If user submitted form   
         # request.form[] is a type of dictionary mapping. 
         username = request.form['username']
         password = request.form['password']
@@ -125,7 +125,7 @@ def login():
         # Flash stores messages that can be retrieved when rendering the template
         flash(error)
 
-    return render_template('auth/login.html')
+    return render_template('authentication/login.html')
 
 @blueprint.route('/logout')
 def logout():
