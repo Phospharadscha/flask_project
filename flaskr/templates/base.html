@@ -1,0 +1,46 @@
+<!-- Notes:
+- g is automatically available in templates
+- if g.user is set:
+    - Either the username and a logout link are displayed
+    - Links to register and login are displayed
+
+- url_for() is automaticaly available. It is used to generate URLs to views instead of manually writing them 
+
+- the block title, block header, and block content will be overriden in other templates.
+-->
+
+<!doctype html>
+
+
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<!--
+The template will loop over each message returned by get_flashed_messages(). 
+This contains the error messages that may have been flashed in the blueprints. 
+
+If there are any flashed messages, then they will be displayed by this code. 
+-->
+<nav>
+  <h1>Flaskr</h1>
+  <ul>
+    {% if g.user %}
+      <li><span>{{ g.user['username'] }}</span>
+      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
+    {% else %}
+      <li><a href="{{ url_for('auth.register') }}">Register</a>
+      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+    {% endif %}
+  </ul>
+</nav>
+
+<!--Page Conent-->
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</section>
