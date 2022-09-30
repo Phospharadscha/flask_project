@@ -56,8 +56,8 @@ def create(r_id):
     if request.method == 'POST':
         # Posts consist of a title and body
         name = request.form['name']
-        paint = request.opt
-        shape = request.form['shape']
+        paint = request.get('paint') 
+        shape = request.get('shape') 
         
         # Stores any errors that may arise. 
         error = None
