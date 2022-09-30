@@ -102,13 +102,22 @@ def create_profile():
         if error is None:
 
             cryptids = get_cryptids()
+            username = session['user_details'][0]
+            password = session['user_details'][1]
+            session['user_details'] = None
+
+            cryptid_id = 0
 
             try:
-                pass:
+                database.execute( 
+                    "INSERT INTO user (username, password, about, favourite_cryptid, cryptid_id) VALUES (?, ?, ?, ?, ?)",
+                    (username, password, about, favourite_cryptid, cryptid_id), # Password is hashed for security
+                )
+                database.commit() # Commit changes to the database
             except:
-                pass:
+                pass
             else:
-                pass:
+                pass
 
 
 
