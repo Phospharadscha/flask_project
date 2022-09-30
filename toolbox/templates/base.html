@@ -30,7 +30,7 @@ If there are any flashed messages, then they will be displayed by this code.
       <li><span>{{ g.user['username'] }}</span>
         <li><a href="{{ url_for('calculator.index') }}">Calculators</a>
         {% if g.user['id'] %}
-          <li><a href="{{ url_for('paint.edit') }}">Edit Paints</a>
+          <li><a href="{{ url_for('paint.index') }}">Edit Paints</a>
         {% endif %}
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}

@@ -16,11 +16,7 @@ from flask import (
 #########################################################################################
 
 
-"""Creates a Flask blueprint named 'auth'. 
-This will be used for authentication of users and to allow logging in and out.  
-
-It needs to know where it is defined, so it is passed the __name__.
-url_prefix is put at the start of all urls associated with authentication
+"""Create the blueprint for paints
 """
 blueprint = Blueprint('paint', __name__)
 
@@ -28,6 +24,18 @@ blueprint = Blueprint('paint', __name__)
 ###################################### Views ############################################
 #########################################################################################
 
-@blueprint.route('/edit')
-def edit(): 
-    pass
+@blueprint.route('/paint') # The '/' will lead to this function
+def index():
+    """The Index will display all paints
+    """
+    database = get_database() # Retrieve a connection to the database
+
+    # From the database, fetch every paint from the paint table.
+    # Order them by id. So, in theory, newer calculators are placed at the top.  
+    paints = database.execute(
+        'SELECT * FROM paint'
+        ' ORDER BY id DESC'
+    ).fetchall()
+    
+    # Returns a command to render the specified template, and passes it the calculators as a parameter. 
+    return render_template('paint/index.html', paints=paints)
