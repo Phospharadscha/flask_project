@@ -51,14 +51,16 @@ def create_app(test_config=None):
     #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for('blog.index') both generate the same url
     app.add_url_rule('/', endpoint='index') 
     
-        
+    # Import and register paint blueprint
     app.register_blueprint(paint.blueprint)
     
-    # Import and register blueprints
+    # Import and register authentication blueprint
     app.register_blueprint(authentication.blueprint)
-      
+    
+    # Import and register room blueprint
     app.register_blueprint(room.blueprint)
     
+    # Import and register wall blueprint
     app.register_blueprint(wall.blueprint)
 
 
