@@ -29,35 +29,36 @@ blueprint = Blueprint('calculator', __name__)
 
 @blueprint.route('/') # The '/' will lead to this function
 def index():
-    """The Index will display all posts, as outlined above
+    """The Index will display all calculators belonging to a specific user, as outlined above
     """
     database = get_database() # Retrieve a connection to the database
 
-    # From the database, fetch the everythinh from the posts table.
-    # Order them by created in descending order. So new posts show at the top. 
+    # From the database, fetch every attribute from the calculator table.
+    # We only want to select the calculators which have an author_id equal to the id of the current user. 
+    # Order them by id. So, in theory, newer calculators are placed at the top.  
     calculators = database.execute(
         'SELECT c.id, author_id, name'
         ' FROM calculator c JOIN user u ON c.author_id = u.id'
         ' ORDER BY c.id DESC'
     ).fetchall()
     
-    # Returns a command to render the specified template, and passes it the posts as a parameter. 
+    # Returns a command to render the specified template, and passes it the calculators as a parameter. 
     return render_template('calculator/index.html', calculators=calculators)
 
 @blueprint.route('/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
 def create():
     """The view used to allow users to create posts.
-    Users must be logged in to create a post. 
+    Users must be logged in to create a calculator. 
     """
     if request.method == 'POST':
-        # Posts consist of a title and body
+        # Calculators only need to be passed a name
         name = request.form['name']
         
         # Stores any errors that may arise. 
         error = None
 
-        # title must be provided
+        # name must be provided
         if not name:
             error = 'A name is required.'
  
@@ -69,7 +70,7 @@ def create():
             # If there was no error, then get a connection to the database
             database = get_database()
             
-            # Insert the post into the post table within the database 
+            # Insert the calculator into the calculator table within the database 
             database.execute(
                 'INSERT INTO calculator (name, author_id)'
                 ' VALUES (?, ?)',
@@ -86,19 +87,20 @@ def create():
 @blueprint.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def update(id):
-    """This view is used to allow users to update their posts
-    It is passed the id of the post which the user wants to update
+    """This view is used to allow users to update their created calculators.
+    It is passed the id of the calculator which the user wants to update
     """
-    # Return a post by id
+    # Return a calculator by id
     calc = get_calculator(id)
 
     if request.method == 'POST':
-        # Retrieve a title and body for the post from the browser
+        # Retrieve a name for the calculator from the browser
         name = request.form['name']
+        
         # Used to store errors
         error = None
 
-        # If no title is given then that is an error
+        # If no name is given then that is an error
         if not name:
             return redirect(url_for('calculator.index'))
 
@@ -109,8 +111,8 @@ def update(id):
             # Retrieve a connection to the database
             database = get_database()
             
-            # With that connection, update the post in the post table, with the supplied parameters
-            # We update post WHERE it is equal to the supplied id. 
+            # With that connection, update the calculator in the calculator table, with the supplied parameters
+            # We update calculator WHERE its id equal to the supplied id. 
             database.execute(
                 'INSERT INTO calculator (name,  author_id)'
                 ' VALUES (?, ?)',
@@ -121,23 +123,23 @@ def update(id):
             # redirect the user back to the index
             return redirect(url_for('calculator.index'))
 
-    # If the post could not be updated, then redirect them back to the update page again
+    # If the calculator could not be updated, then redirect them back to the update page again
     return render_template('calculator/update.html', calc=calc)
 
 @blueprint.route('/<int:id>/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def delete(id):
-    # Retrieves the post by the specified id
-    get_calculator(id) # If the post cannot be found, then the blueprint aborts. 
+    # Retrieves the calculator by the specified id
+    get_calculator(id) # If the calculator cannot be found, then the blueprint aborts. 
     
     # Get a connection to the database
     database = get_database()
     
-    # From the post table, delete every post where the id equally the supplied id
+    # From the calculator table, delete every calculator where the id equals the supplied id
     database.execute('DELETE FROM calculator WHERE id = ?', (id,))
     database.commit()
     
-    # When a post has been deleted, redirect to the index
+    # When a calculator has been deleted, redirect to the index
     return redirect(url_for('calculator.index'))
 
 #########################################################################################
@@ -145,29 +147,29 @@ def delete(id):
 #########################################################################################
 
 def get_calculator(id, check_author=True):
-    """To update and delete posts we need to fetch the post by id.
-    Once the post has been found, it then needs to verify if it belongs to the user. 
+    """To update and delete calculators we need to fetch them by id.
+    Once the calculator has been found, it then needs to verify if it belongs to the user. 
     
-    Is passed a post id, and a bool. Bool is true by default
-    The bool is used so that the function can be used to get posts without checking the owner. 
+    Is passed a calculator id, and a bool. Bool is true by default
+    The bool is used so that the function can be used to get calculators without checking the owner. Should that be needed 
     """
     
     # Get a connection to the database
-    # Then search the database to see if a post exists which:
-    # Has the id of the selected post, and is owned by the user who requested to delete it
+    # Then search the database to see if a calculator exists which:
+    # Has the id of the selected calculator, and is owned by the user who requested to delete it
     calc = get_database().execute(
         'SELECT c.id, author_id, name'
         ' FROM calculator c JOIN user u ON c.author_id = u.id'
-        ' WHERE c.id = ?',
-        (id,)
+        ' WHERE c.id = ? AND u.id = ?',
+        (id, g.user['id'],)
     ).fetchone()
 
-    # If the post does not exist:
-    # Which means that a post with the specified id, which is owned by the specified user
+    # If the calculator does not exist:
+    # Which means that a calculator with the specified id, which is owned by the specified user
     if calc is None:
         abort(404, f"Calculator id: {id} doesn't exist.") # abort will raise a special exception that returns HTTP status code
 
-    # If we want to check the author, and the author of the post is not the same as the person requesing it,
+    # If we want to check the owner, and the owner of the calculator is not the same as the person requesing it,
     # then abort with an error
     if check_author and calc['author_id'] != g.user['id']:
         abort(403, "You are not the owner of this calculator.")
