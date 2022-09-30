@@ -18,14 +18,14 @@ If the user is an author of the post, then they are given the option to edit it.
 loop.last is used inside Jinja to display a line after each posts, except the last one. 
 -->
 {% block content %}
-  {% for wall in wallss %}
+  {% for wall in walls %}
     <article class="wall">
       <header>
         <div>
           <h1>{{ wall['name'] }}</h1>
         </div>
         {% if room_id == wall['room_id'] %}
-         
+
         {% endif %}
       </header>
     </article>

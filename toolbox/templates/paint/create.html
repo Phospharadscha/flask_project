@@ -4,7 +4,7 @@
 
 <!--Everything within this block will be placed in the header section of the base template-->
 {% block header %}
-  <h1>{% block title %}New Wall{% endblock %}</h1>
+  <h1>{% block title %}New Paint{% endblock %}</h1>
 {% endblock %}
 
 <!--Replaces the content block of base.hmtl-->
@@ -13,19 +13,14 @@
 This is requested in the blog blueprint-->
 {% block content %}
   <form method="post">
-    <label for="name">Wall name:</label>
+    <label for="name">Name:</label>
     <input name="name" id="name" value="{{ request.form['name'] }}" required>
-    <select name="paint">
-      {% for paint in paints %}
-        <option value="{{paint.id}}">{{paint.name}}</option>
-      {% endfor %}
-    </select>
-    <select name="shape">
-      <option value="{{shapes[0]}}" selected>{{shapes[0]}}</option>
-      {% for shape in shapes[1:] %}
-        <option value="{{shape}}">{{shape}}</option>
-      {% endfor %}
-    </select>
+    <label for="price">Price:</label>
+    <input name="price" id="price" value="{{ request.form['price'] }}" required>
+    <label for="volume">Volume:</label>
+    <input name="volume" id="volume" value="{{ request.form['volume'] }}" required>
+    <label for="coverage">Coverage:</label>
+    <input name="coverage" id="coverage" value="{{ request.form['coverage'] }}" required>
     <input type="submit" value="Save">
   </form>
 {% endblock %}

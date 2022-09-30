@@ -62,8 +62,8 @@ def create(r_id):
     if request.method == 'POST':
         # Posts consist of a title and body
         name = request.form['name']
-        paint = request.form.get['paint'] 
-        shape = request.form.get['shape'] 
+        paint = request.form.get('paint')
+        shape = request.form.get("shape") 
         
         # Stores any errors that may arise. 
         error = None
@@ -71,6 +71,17 @@ def create(r_id):
         # A wall must be given a name
         if not name:
             error = 'A name is required.'
+        
+        if not paint:
+            error = 'A paint must be chosen.'
+        else:
+            try:
+                paint = int(paint)
+            except:
+                 error = ('Does not return an int: %s' % paint[0])
+            
+        if not shape:
+            error = 'A shape must be chosen.'
  
         # If there as an error then flash it, so it can be displayed by the page
         if error is not None:
@@ -81,9 +92,9 @@ def create(r_id):
                       
             # Insert the new wall into the wall table within the database 
             database.execute(
-                'INSERT INTO wall (name, room_id)'
-                ' VALUES (?, ?)',
-                (name, id)
+                'INSERT INTO wall (name, room_id, paint_id, shape, surface)'
+                ' VALUES (?, ?, ?, ?, ?)',
+                (name, r_id, paint, shape, 0)
             )
             database.commit()
             
@@ -106,7 +117,10 @@ def get_paint():
                       
     # We want to fetch all the information from every paint in the paint table 
     paints = database.execute(
-        'SELECT * FROM paint'
+        'SELECT id, name FROM paint'
     ).fetchall()
     
     return paints
+
+def get_surface_area(shape):
+    pass

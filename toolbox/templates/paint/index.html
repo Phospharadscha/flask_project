@@ -7,8 +7,8 @@
 <!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
 {% block header %}
   <h1>{% block title %}Paints{% endblock %}</h1>
-  {% if g.user %}
-   
+  {% if g.user['id'] == 1 %}
+    <a class="action" href="{{ url_for('paint.create') }}">New</a>
   {% endif %}
 {% endblock %}
 
