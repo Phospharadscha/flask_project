@@ -17,6 +17,12 @@ CREATE TABLE user (
   admin INTEGER NOT NULL 
 );
 
+-- Create a table to store paints
+-- Each paint has a primary key, which increments automatically,
+-- a name, which must be unique. So you cannot have two paints with the same name,
+-- a price, which is a float. This will be in pounds,
+-- a volume, which is a float. This will be in litres,
+-- a coverate. This is the area (m2) which can be covered per litre.
 CREATE TABLE paint (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   name TEXT UNIQUE NOT NULL,
@@ -25,6 +31,10 @@ CREATE TABLE paint (
   coverage REAL NOT NULL
 );
 
+-- Create a table to store calculators. 
+-- A calculator consists of a primary key, which is an int,
+-- an author id, which is a foreign key linking to a user id,
+-- a name. 
 CREATE TABLE calculator (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   author_id INTEGER NOT NULL, 
@@ -32,6 +42,10 @@ CREATE TABLE calculator (
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
 
+-- Create a table to store rooms.
+-- A room consists of a primary key which is an int,
+-- a calculator id. This is a foreign key linking to the id of a calculator,
+-- a name,
 CREATE TABLE room (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   calculator_id INTEGER NOT NULL, 
@@ -39,6 +53,13 @@ CREATE TABLE room (
   FOREIGN KEY (calculator_id) REFERENCES calculator (id)
 );
 
+-- Create a table to store walls. #
+-- A wall consists of a primary key which is an int, 
+-- a room id. This is a foreign key linking to the id of a room,
+-- a paint id. This is a foreign key linking to the id of a paint,
+-- a name, 
+-- the shape of the wall
+-- the surface area, in m2. 
 CREATE TABLE wall (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   room_id INTEGER NOT NULL, 
