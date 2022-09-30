@@ -1,0 +1,27 @@
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Userful pattern: Place the title in the header-->
+{% block header %}
+  <h1>{% block title %}Tell us about yourself!{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--input tags are required, which will prevent the browser from submitting the form until they are filled.-->
+<!--The content block retrieves the login information from the user.
+This is requested in the authentication.py blueprint-->
+{% block content %}
+  <form method="post">
+    <label for="Favourite Cryptid">What is your favourite cryptid?</label>
+    <select name="shape">
+        <option value="{{cryptids[0]}}" selected>{{cryptids[0]}}</option>
+        {% for cryptid in cryptids[1:] %}
+          <option value="{{cryptid}}">{{cryptid}}</option>
+        {% endfor %}
+      </select>
+    <label for="about">Tell us about yourself!</label>
+    <input type="about" name="about" id="about" required>
+    <input type="submit" value="Log In">
+  </form>
+{% endblock %}

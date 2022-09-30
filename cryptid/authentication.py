@@ -39,6 +39,9 @@ def register():
         # request.form[] is a type of dictionary mapping. 
         username = request.form['username']
         password = request.form['password']
+
+        if session['user_details'] is not None:
+            session['user_details'] = None
         
         # Retrieve the database for storing user information
         database = get_database()
@@ -55,29 +58,68 @@ def register():
 
         # If validation was successful, insert their data into the user table
         if error is None:
-            
-            # Try catch for error handling
-            try:
-                # takes SQL query 
-                # ? are placeholders for user input, tuple is what to replace the placeholders with
-                # The database library will automatically protect from SQL injection 
-                database.execute( 
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)), # Password is hashed for security
-                )
-                database.commit() # Commit changes to the database
-            except database.IntegrityError: # If username is already in use
+
+            user = database.execute( 
+                "SELECT FROM user username",
+                " WHERE username = ?",
+                (username,) 
+            )
+            database.commit() # Commit changes to the database
+
+            if user is not None:
                 error = f"User {username} is already registered."
-            else: # If no exception, then redirect to login page
-                # url_for automatially generates the url for login based on name
-                # redirect then redirects the user to that url
-                return redirect(url_for("auth.login"))
+            else:
+                session['user_details'] = user_details
+                return redirect(url_for("authentication.create_profile"))
 
         # Flash stores messages that can be retrieved when rendering the template
         flash(error)
 
     # renders a template containing the HTML
     return render_template('authentication/register.html')
+
+@blueprint.route('/register/profile', methods=('GET', 'POST'))   # Associates the '/register/ url with the register view function
+def create_profile():    
+    if request.method == 'POST':   # If user submitted the form
+
+        about = request.form['username']
+        favourite_cryptid = request.form['password']
+        
+        database = get_database()
+
+        
+        # Will store any error from the result of input validation
+        error = None
+
+        # Validate user input.
+        # Check that they are not empty
+        if not about:
+            error = 'Please tell us about yourself.'
+        elif not favourite_cryptid:
+            error = 'Please tell us your favourite cryptid.'
+
+        # If validation was successful, insert their data into the user table
+        if error is None:
+
+            cryptids = get_cryptids()
+
+            try:
+                pass:
+            except:
+                pass:
+            else:
+                pass:
+
+
+
+
+        # Flash stores messages that can be retrieved when rendering the template
+        flash(error)
+
+    # renders a template containing the HTML
+    return render_template('authentication/profile.html')
+
+
 
 @blueprint.route('/login', methods=('GET', 'POST'))
 def login():
@@ -173,3 +215,20 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+#########################################################################################
+###################################### Functions ########################################
+#########################################################################################
+
+def get_cryptids():
+    """This function is used to retrieve a dictionary containing all of the paint from the paint database. 
+    """
+    # Return a connection to the database 
+    database = get_database()
+                      
+    # We want to fetch all the information from every paint in the paint table 
+    cryptids = database.execute(
+        'SELECT id, name FROM cryptid'
+    ).fetchall()
+    
+    return cryptids
