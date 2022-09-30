@@ -14,11 +14,10 @@ from toolbox.database import get_database
 #################################### Blueprint ##########################################
 #########################################################################################
 
-"""Blueprint for the calculator. 
-The blog will:
-- List all posts
-- allow logged in users to create posts, 
-- allow the author of a post to edit or delete their post
+"""Blueprint for the wall. 
+The wall will:
+- Allow logged in users to create new walls, 
+- update walls they have already created
 """
 blueprint = Blueprint('wall', __name__)
 
@@ -26,14 +25,15 @@ blueprint = Blueprint('wall', __name__)
 ######################################## views ##########################################
 #########################################################################################
 
-@blueprint.route('/<int:r_id>/room/wall', methods=['GET', 'POST']) # The '/' will lead to this function
+@blueprint.route('/<int:r_id>/room/wall', methods=['GET', 'POST']) 
 def index(r_id):
-    """The Index will display all posts, as outlined above
+    """The Index will display all walls, as outlined above
+    The function is passed the id of the room it is contained in via the url.
     """
     database = get_database() # Retrieve a connection to the database
     
-    # From the database, fetch the everythinh from the posts table.
-    # Order them by created in descending order. So new posts show at the top.     
+    # From the database, fetch walls from the wall table.
+    # We only want walls with a room_id equal to the supplied id
     walls = get_database().execute(
         'SELECT w.id, room_id, w.name'
         ' FROM wall w JOIN room r ON w.room_id = r.id'
@@ -41,16 +41,22 @@ def index(r_id):
         (r_id,)
     ).fetchall()
     
-    # Returns a command to render the specified template, and passes it the posts as a parameter. 
+    # Returns a command to render the specified template, and passes it the walls as a parameter. 
     return render_template('wall/index.html', walls=walls, room_id=r_id)
 
 @blueprint.route('/<int:r_id>/room/wall/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
 def create(r_id):
-    """The view used to allow users to create posts.
-    Users must be logged in to create a post. 
+    """The view used to allow users to create new walls.
+    the function is passed the room it will be contained in via its url.  
     """
+    # Fetch a dictionary of all paints in the paint table. 
+    # This will be used to define a drop down menu in html. 
     paints = get_paint()
+    
+    # An array of valid shapes. 
+    # Used to define a drop down menu in html
+    # Should swap to enum later
     shapes = ["Square"]
     
     if request.method == 'POST':
@@ -62,7 +68,7 @@ def create(r_id):
         # Stores any errors that may arise. 
         error = None
 
-        # title must be provided
+        # A wall must be given a name
         if not name:
             error = 'A name is required.'
  
@@ -73,9 +79,9 @@ def create(r_id):
             # If there was no error, then get a connection to the database
             database = get_database()
                       
-            # Insert the post into the post table within the database 
+            # Insert the new wall into the wall table within the database 
             database.execute(
-                'INSERT INTO room (name, calculator_id)'
+                'INSERT INTO wall (name, room_id)'
                 ' VALUES (?, ?)',
                 (name, id)
             )
@@ -91,10 +97,14 @@ def create(r_id):
 ######################################## Functions ######################################
 #########################################################################################
 
-def get_paint(): 
+def get_paint():
+    """This function is used to retrieve a dictionary containing all of the paint from the paint database. 
+    """
+    
+    # Return a connection to the database 
     database = get_database()
                       
-    # Insert the post into the post table within the database 
+    # We want to fetch all the information from every paint in the paint table 
     paints = database.execute(
         'SELECT * FROM paint'
     ).fetchall()
