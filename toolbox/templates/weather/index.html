@@ -1,0 +1,63 @@
+<!--The primary webpage, displays user posts-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Userful pattern: Place the title in the header-->
+<!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
+{% block header %}
+  <h1>{% block title %}{{ title }}{% endblock %}
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px; 
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        #weather {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+    </style>
+  </h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--
+If the user is an author of the post, then they are given the option to edit it. 
+loop.last is used inside Jinja to display a line after each posts, except the last one. 
+-->
+{% block content %}
+  <b1>
+    <table>
+        <tr>
+            <th>Time</th>
+            <th>Temperature</th>
+            <th>Humidity</th>
+            <th>Weather</th>
+            <th>Wind</th>
+        </tr>
+        {% for item in data["list"] %}
+            <tr>
+                <td>{{ item["dt_txt"] }}</td>
+                <td>{{ item["main"]["temp"] }}°C</td>
+                <td>{{ item["main"]["humidity"] }}%</td>
+                <td><div id="weather"><img src="/static/icons/{{ item["weather"][0]["icon"] }}.png"></img> {{ item["weather"][0]["main"] }}</div></td>
+                <td>{{ '%.2f' % (item["wind"]["speed"]*3.6) }} km/h ({{ item["wind"]["deg"] }} deg)</td>
+            </tr>
+        {% endfor %}
+    </table>
+  </b1>
+{% endblock %}
