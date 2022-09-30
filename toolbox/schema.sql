@@ -1,4 +1,5 @@
 -- Remove the tables if they already exist 
+-- This is only called on initialization 
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS paint;
