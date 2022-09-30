@@ -114,9 +114,9 @@ def update(id):
             # With that connection, update the calculator in the calculator table, with the supplied parameters
             # We update calculator WHERE its id equal to the supplied id. 
             database.execute(
-                'INSERT INTO calculator (name,  author_id)'
-                ' VALUES (?, ?)',
-                (name, g.user['id'])
+                'UPDATE calculator SET name = ?'
+                ' WHERE id = ?',
+                (name, calc['id')
             )
             database.commit()
             
