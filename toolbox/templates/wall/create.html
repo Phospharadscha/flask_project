@@ -15,16 +15,18 @@ This is requested in the blog blueprint-->
   <form method="post">
     <label for="name">Wall name:</label>
     <input name="name" id="name" value="{{ request.form['name'] }}" required>
-    <select>
-        {% for paint in paints %}
-        <option name="paint" id="paint" value="{{paint}}">{{paint}}</option>
-        {% endfor %}
-    </select>
-    <select>
-      {% for shape in shapes %}
-      <option name="shape" id="shape" value="{{shape}}">{{shape}}</option>
+    <select name="paint">
+      <option value="{{paints[0]}}" selected>{{paints[0]}}</option>
+      {% for paint in paints[1:] %}
+        <option value="{{paint}}">{{paint}}</option>
       {% endfor %}
-  </select>
+    </select>
+    <select name="shape">
+      <option value="{{shapes[0]}}" selected>{{shapes[0]}}</option>
+      {% for shape in shapes[1:] %}
+        <option value="{{shape}}">{{shape}}</option>
+      {% endfor %}
+    </select>
     <input type="submit" value="Save">
   </form>
 {% endblock %}

@@ -116,7 +116,7 @@ def update(id):
             database.execute(
                 'UPDATE calculator SET name = ?'
                 ' WHERE id = ?',
-                (name, calc['id')
+                (name, calc['id'])
             )
             database.commit()
             

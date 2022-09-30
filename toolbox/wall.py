@@ -57,13 +57,13 @@ def create(r_id):
     # An array of valid shapes. 
     # Used to define a drop down menu in html
     # Should swap to enum later
-    shapes = ["Square"]
+    shapes = ["Square", "Rectangle", "Parallelogram"]
     
     if request.method == 'POST':
         # Posts consist of a title and body
         name = request.form['name']
-        paint = request.get('paint') 
-        shape = request.get('shape') 
+        paint = request.form.get['paint'] 
+        shape = request.form.get['shape'] 
         
         # Stores any errors that may arise. 
         error = None
@@ -91,7 +91,7 @@ def create(r_id):
             return redirect(url_for('wall.index', r_id=r_id))
 
     # If it was unsucessful, then return the user back to the create page
-    return render_template('wall/create.html', paints=paints, shape=shapes)
+    return render_template('wall/create.html', paints=paints, shapes=shapes)
 
 #########################################################################################
 ######################################## Functions ######################################

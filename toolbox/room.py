@@ -89,12 +89,12 @@ def create(c_id):
             database.execute(
                 'INSERT INTO room (name, calculator_id)'
                 ' VALUES (?, ?)',
-                (name, id)
+                (name, c_id)
             )
             database.commit()
             
             # Redirect the user back to the index page for room
-            return redirect(url_for('room.index', c_id=id))
+            return redirect(url_for('room.index', c_id=c_id))
 
     # If it was unsucessful, then return the user back to the create page
     return render_template('room/create.html')
@@ -129,7 +129,7 @@ def update(c_id, r_id):
             database = get_database()
             
             # With that connection, we want to updated the room table with the new room name. 
-             database.execute(
+            database.execute(
                 'UPDATE room SET name = ?'
                 ' WHERE id = ?',
                 (name, r_id)
