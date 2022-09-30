@@ -73,7 +73,7 @@ def init_database_command():
      # If there was no error, then get a connection to the database
     database = get_database()
     
-    # Insert the post into the post table within the database 
+    # As part of initialization, insert an admin user into the user database
     database.execute(
         'INSERT INTO user (username, password, admin)'
         ' VALUES (?, ?, ?)',
