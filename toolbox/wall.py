@@ -122,5 +122,20 @@ def get_paint():
     
     return paints
 
-def get_surface_area(shape):
-    pass
+def get_surface_area(wall_shape):
+    surface_area = 0 
+    
+    if wall_shape == 'Square':
+        height = request.form['name']
+
+        error = None
+
+        if height is None:
+            error('A height must be entered')
+
+        
+
+    elif wall_shape == 'rectangle':
+        pass
+    elif wall_shape == 'Parallelogram':
+        pass
