@@ -162,7 +162,7 @@ def wall_details(r_id, w_id, wall_shape):
     
     dimensions = [0, 0, 0]
     
-    dimension[0] = request.form['dim_one']
+    dimensions[0] = request.form.get('dim_one')
 
     
     error = None 
@@ -170,43 +170,42 @@ def wall_details(r_id, w_id, wall_shape):
     shape = Shape.to_shape(wall_shape.lower())
 
     
-    if shape is Shape.SQUARE:
-        
-        dimension = check_measurement_input(dimension)
-        
-        if isinstance(dimension, float):
-            surface_area = shape(dimension)
-            
-            database = get_database()
-            # With that connection, update the house in the house table, with the supplied parameters
-            # We update house WHERE its id equal to the supplied id. 
-            database.execute(
-                'UPDATE wall SET surface = ?'
-                ' WHERE id = ?',
-                (surface_area, w_id)
-            )
-            database.commit()
-            
-        else:
-            error = dimension
-          
-    elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
-        pass
-    elif shape is Shape.TRAPEZOID:
-        pass
-    elif shape is Shape.ELLIPSE:
-        pass
-    elif shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
-        pass
-    else:
-        return "tee hee" 
-    
     if error is not None:
         flash(error)
     else: 
-        return render_template('wall/index.html', r_id=r_id)
+        if shape is Shape.SQUARE:
+        
+            dimensions[0] = check_measurement_input(dimensions[0])
+
+            if isinstance(dimensions[0], float):
+                surface_area = shape(dimensions[0])
+
+                database = get_database()
+                # With that connection, update the house in the house table, with the supplied parameters
+                # We update house WHERE its id equal to the supplied id. 
+                database.execute(
+                    'UPDATE wall SET surface = ?'
+                    ' WHERE id = ?',
+                    (surface_area, w_id)
+                )
+                database.commit()
+
+            else:
+                error = dimensions[0]
+        elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
+            pass
+        elif shape is Shape.TRAPEZOID:
+            pass
+        elif shape is Shape.ELLIPSE:
+            pass
+        elif shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
+            pass
+        else:
+            return "tee hee" 
+
+        return redirect(url_for('wall.index', r_id=r_id))
     
-    return redirect(url_for('wall/wall_details.html', r_id=r_id, w_id=w_id['id'], wall_shape=wall_shape.lower()))
+    return render_template('wall/wall_details.html', r_id=r_id, w_id=w_id, wall_shape=wall_shape.lower())
 
 #########################################################################################
 ######################################## Functions ######################################
