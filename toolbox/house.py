@@ -91,7 +91,7 @@ def update(id):
     It is passed the id of the house which the user wants to update
     """
     # Return a house by id
-    calc = get_house(id)
+    house = get_house(id)
 
     if request.method == 'POST':
         # Retrieve a name for the house from the browser
@@ -116,7 +116,7 @@ def update(id):
             database.execute(
                 'UPDATE house SET name = ?'
                 ' WHERE id = ?',
-                (name, calc['id'])
+                (name, house['id'])
             )
             database.commit()
             
@@ -124,16 +124,26 @@ def update(id):
             return redirect(url_for('house.index'))
 
     # If the house could not be updated, then redirect them back to the update page again
-    return render_template('house/update.html', calc=calc)
+    return render_template('house/update.html', house=house)
 
 @blueprint.route('/<int:id>/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def delete(id):
     # Retrieves the house by the specified id
     get_house(id) # If the house cannot be found, then the blueprint aborts. 
+    rooms = get_rooms(id)
     
     # Get a connection to the database
     database = get_database()
+    
+    # delete every wall and room that would be within the house that is to be deleted. 
+    if rooms is not None:
+        for room in rooms:
+            database.execute('DELETE FROM wall WHERE room_id = ?', (room['id'],))
+            database.commit()
+            
+            database.execute('DELETE FROM room WHERE id = ?', (room['id'],))
+            database.commit()
     
     # From the house table, delete every house where the id equals the supplied id
     database.execute('DELETE FROM house WHERE id = ?', (id,))
@@ -175,3 +185,13 @@ def get_house(id, check_author=True):
         abort(403, "You are not the owner of this house.")
 
     return calc
+
+def get_rooms(id):
+    database = get_database()
+    
+    rooms = get_database().execute(
+        'SELECT * FROM room WHERE house_id = ?',
+        (id,)
+    ).fetchall()
+    
+    return rooms

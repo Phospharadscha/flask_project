@@ -153,6 +153,10 @@ def delete(h_id, r_id):
     database = get_database()
     
     # From the room table, delete every room where the id is equal to the supplied id
+    # also delete every wall that was within that room. 
+    database.execute('DELETE FROM wall WHERE room_id = ?', (r_id,))
+    database.commit()
+    
     database.execute('DELETE FROM room WHERE id = ?', (r_id,))
     database.commit()
     

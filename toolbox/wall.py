@@ -35,7 +35,7 @@ class Shape(Enum):
         """
         return self.value[0](args)
     
-     @classmethod
+    @classmethod
     def to_shape(self, shape_name):
         """This is a class method, meaning it does not need to be called on a Shape object.
         The method is passed a string, which it will then attempt to return a matching shape for.  
@@ -174,7 +174,7 @@ def get_paint():
     return paints
 
 
-def define_square():
+def define_square(shape):
     height = request.form['height']
     
     error = None
@@ -182,15 +182,27 @@ def define_square():
     if height is None:
         error('A height must be entered')
         
+    if error is not None:
+        flash(error)
+    else:
+        pass
     
+        
+
 
 def get_surface_area(wall_shape):
     surface_area = 0 
+    dimensions = []
+    
+    dimensions[0] = request.form('dim_one')
+    dimensions[1] = request.form('dim_two')
+    dimensions[2] = request.form('dim_three')
+    
     
     shape = Shape.to_shape(wall_shape)
     
     if shape is Shape.SQUARE:
-        
+        pass  
     elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
         pass
     elif shape is Shape.TRAPEZOID:
@@ -201,21 +213,3 @@ def get_surface_area(wall_shape):
         pass
     else:
         return 0 
-    
-    
-    
-    
-    if wall_shape == 'Square':
-        height = request.form['name']
-
-        error = None
-
-        if height is None:
-            error('A height must be entered')
-
-        
-
-    elif wall_shape == 'rectangle':
-        pass
-    elif wall_shape == 'Parallelogram':
-        pass

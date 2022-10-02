@@ -25,7 +25,7 @@ loop.last is used inside Jinja to display a line after each posts, except the la
           <h1>{{ room['name'] }}</h1>
         </div>
         {% if house_id == room['house_id'] %}
-          <a class="action" href="{{ url_for('wall.index', r_id=room['id']) }}">Populate</a>
+          <a class="action" href="{{ url_for('wall.index', r_id=room['id']) }}">Create walls</a>
           <a class="action" href="{{ url_for('room.update', h_id=house_id, r_id=room['id']) }}">Edit</a>
         {% endif %}
       </header>
