@@ -31,7 +31,7 @@ def get_weather():
     target_city = request.args.get('city')
 
     if target_city is None:
-        target_city = 'London'
+        target_city = 'Bradford'
 
     request_data = {}
     request_data['q'] = target_city
