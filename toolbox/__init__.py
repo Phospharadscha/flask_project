@@ -4,6 +4,8 @@
 import os
 from flask import Flask
 
+from . import house
+
 #########################################################################################
 #################################### Factory Function ###################################
 #########################################################################################
@@ -38,14 +40,14 @@ def create_app(test_config=None):
         pass
     
     # Import modules from the root directory
-    from . import database, authentication, paint, weather, calculator, room, wall
+    from . import database, authentication, paint, weather, room, wall, house
     
     # This registers two functions with the application: 
     # - app.teardown_appcontext(close_db)   
     # - app.cli.add_command(init_db_command)
     database.init_app(app)
     
-    app.register_blueprint(calculator.blueprint)
+    app.register_blueprint(house.blueprint)
     # Blog does not have a url_prefix, so the index will be at '/'
     # This makes the blog index the main index
     #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for('blog.index') both generate the same url

@@ -4,7 +4,7 @@
 
 <!--Everything within this block will be placed in the header section of the base template-->
 {% block header %}
-  <h1>{% block title %}New Calculator{% endblock %}</h1>
+  <h1>{% block title %}New House{% endblock %}</h1>
 {% endblock %}
 
 <!--Replaces the content block of base.hmtl-->
@@ -13,7 +13,7 @@
 This is requested in the blog blueprint-->
 {% block content %}
   <form method="post">
-    <label for="name">Calculator name:</label>
+    <label for="name">House name:</label>
     <input name="name" id="name" value="{{ request.form['name'] }}" required>
     <input type="submit" value="Save">
   </form>

@@ -36,7 +36,7 @@ CREATE TABLE paint (
 -- A calculator consists of a primary key, which is an int,
 -- an author id, which is a foreign key linking to a user id,
 -- a name. 
-CREATE TABLE calculator (
+CREATE TABLE house (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
   author_id INTEGER NOT NULL, 
   name TEXT NOT NULL, 
@@ -49,9 +49,9 @@ CREATE TABLE calculator (
 -- a name,
 CREATE TABLE room (
   id INTEGER PRIMARY KEY AUTOINCREMENT, 
-  calculator_id INTEGER NOT NULL, 
+  house_id INTEGER NOT NULL, 
   name TEXT NOT NULL, 
-  FOREIGN KEY (calculator_id) REFERENCES calculator (id)
+  FOREIGN KEY (house_id) REFERENCES house (id)
 );
 
 -- Create a table to store walls. #

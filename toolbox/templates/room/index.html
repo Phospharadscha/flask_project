@@ -6,9 +6,9 @@
 <!--Userful pattern: Place the title in the header-->
 <!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
 {% block header %}
-  <h1>{% block title %}{{c_name['name']}} Rooms{% endblock %}</h1>
+  <h1>{% block title %}{{h_name['name']}} Rooms{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('room.create', c_id=calculator_id) }}">New</a>
+    <a class="action" href="{{ url_for('room.create', h_id=house_id) }}">New</a>
   {% endif %}
 {% endblock %}
 
@@ -24,9 +24,9 @@ loop.last is used inside Jinja to display a line after each posts, except the la
         <div>
           <h1>{{ room['name'] }}</h1>
         </div>
-        {% if calculator_id == room['calculator_id'] %}
+        {% if house_id == room['house_id'] %}
           <a class="action" href="{{ url_for('wall.index', r_id=room['id']) }}">Populate</a>
-          <a class="action" href="{{ url_for('room.update', c_id=calculator_id, r_id=room['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('room.update', h_id=house_id, r_id=room['id']) }}">Edit</a>
         {% endif %}
       </header>
     </article>

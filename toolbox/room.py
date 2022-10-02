@@ -14,7 +14,7 @@ from toolbox.database import get_database
 #################################### Blueprint ##########################################
 #########################################################################################
 
-"""Blueprint for the calculator. 
+"""Blueprint for the house. 
 The room will:
 - List all rooms
 - allow logged in users to create new rooms, 
@@ -26,44 +26,44 @@ blueprint = Blueprint('room', __name__)
 ######################################## views ##########################################
 #########################################################################################
 
-@blueprint.route('/<int:c_id>/room', methods=['GET', 'POST']) 
-def index(c_id):
+@blueprint.route('/<int:h_id>/room', methods=['GET', 'POST']) 
+def index(h_id):
     """The Index will display all rooms owned by the user, as outlined above.
-    This function is passed a calculator id from its url. 
+    This function is passed a house id from its url. 
     This id is used to authenticate that rooms belong to the user. 
-    We use the calculator id, as that is a field in the room table. Furthermore, a user cannot enter a calculator that isn't theres. 
+    We use the house id, as that is a field in the room table. Furthermore, a user cannot enter a house that isn't theres. 
     So, we have already verified the user. 
     """
     database = get_database() # Retrieve a connection to the database
     
     # From the database, fetch the rooms from the room table
-    # We want to select rooms where their calculator_id  value is equal to the passed calculator id
+    # We want to select rooms where their house_id  value is equal to the passed house id
     # They are ordered by the room id. This should mean they are ordered by creation. 
     rooms = get_database().execute(
-        'SELECT r.id, calculator_id, r.name'
-        ' FROM room r JOIN calculator c ON r.calculator_id = c.id'
-        ' WHERE c.id = ? ORDER BY r.id DESC',
-        (c_id,)
+        'SELECT r.id, house_id, r.name'
+        ' FROM room r JOIN house h ON r.house_id = h.id'
+        ' WHERE h.id = ? ORDER BY r.id DESC',
+        (h_id,)
     ).fetchall()
     
-    # Select the calculator which these rooms belong too. 
-    # We only want the name of calculator. This will be used to render the name of the calculator. 
-    calculator = get_database().execute(
-        'SELECT c.name'
-        ' FROM calculator c JOIN room r ON r.calculator_id = c.id'
-        ' WHERE c.id = ?',
-        (c_id,)
+    # Select the house which these rooms belong too. 
+    # We only want the name of house. This will be used to render the name of the house. 
+    house = get_database().execute(
+        'SELECT h.name'
+        ' FROM house h JOIN room r ON r.house_id = h.id'
+        ' WHERE h.id = ?',
+        (h_id,)
     ).fetchone()
     
-    # Returns a command to render the specified template, and passes it the rooms as a parameter, the calculator id, and the name of the calculator. 
-    return render_template('room/index.html', rooms=rooms, calculator_id=c_id, c_name=calculator)
+    # Returns a command to render the specified template, and passes it the rooms as a parameter, the house id, and the name of the house. 
+    return render_template('room/index.html', rooms=rooms, house_id=h_id, h_name=house)
 
-@blueprint.route('/<int:c_id>/room/create', methods=('GET', 'POST'))
+@blueprint.route('/<int:h_id>/room/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
-def create(c_id):
+def create(h_id):
     """The view used to allow users to create rooms.
     Users must be logged in to create a room.
-    The function is passed the id of the calculator it belongs too via the url. 
+    The function is passed the id of the house it belongs too via the url. 
     """
     
     if request.method == 'POST':
@@ -85,29 +85,29 @@ def create(c_id):
             database = get_database()
                       
             # Insert the room into the room table within the database 
-            # the name and id of the calculator are passed in 
+            # the name and id of the house are passed in 
             database.execute(
-                'INSERT INTO room (name, calculator_id)'
+                'INSERT INTO room (name, house_id)'
                 ' VALUES (?, ?)',
-                (name, c_id)
+                (name, h_id)
             )
             database.commit()
             
             # Redirect the user back to the index page for room
-            return redirect(url_for('room.index', c_id=c_id))
+            return redirect(url_for('room.index', h_id=h_id))
 
     # If it was unsucessful, then return the user back to the create page
     return render_template('room/create.html')
 
-@blueprint.route('/<int:c_id>/room/<int:r_id>/update', methods=('GET', 'POST'))
+@blueprint.route('/<int:h_id>/room/<int:r_id>/update', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
-def update(c_id, r_id):
-    """To update a room we need the id of the calculator it belongs too, and the id of the room we want to update. 
+def update(h_id, r_id):
+    """To update a room we need the id of the house it belongs too, and the id of the room we want to update. 
     Both of these parameters are passed to the function through its url. 
     """
     
     # Get the room from the get_room() function. 
-    room = get_room(c_id, r_id)
+    room = get_room(h_id, r_id)
     
     
     if request.method == 'POST':
@@ -119,7 +119,7 @@ def update(c_id, r_id):
 
         # If no name is given then that is an error
         if not name:
-            return redirect(url_for('room.index', c_id=c_id))
+            return redirect(url_for('room.index', h_id=h_id))
 
         if error is not None:
             flash(error)
@@ -137,17 +137,17 @@ def update(c_id, r_id):
             database.commit()
             
             # redirect the user back to the index
-            return redirect(url_for('room.index', c_id=c_id))
+            return redirect(url_for('room.index', h_id=h_id))
 
     # If the room could not be updated, then redirect them back to the update page again
-    return render_template('room/update.html', room=room, calculator_id=c_id)
+    return render_template('room/update.html', room=room, house_id=h_id)
 
-@blueprint.route('/<int:c_id>/room/<int:r_id>/delete', methods=('POST',))
+@blueprint.route('/<int:h_id>/room/<int:r_id>/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
-def delete(c_id, r_id):
+def delete(h_id, r_id):
     
     # Retrieves the room by the specified id
-    get_room(c_id, r_id) # If the room cannot be found, then the blueprint aborts. 
+    get_room(h_id, r_id) # If the room cannot be found, then the blueprint aborts. 
     
     # Get a connection to the database
     database = get_database()
@@ -157,31 +157,31 @@ def delete(c_id, r_id):
     database.commit()
     
     # Once the room has been deleted, redirect to the index
-    return redirect(url_for('room.index', c_id=c_id))
+    return redirect(url_for('room.index', h_id=h_id))
 
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
 
-def get_room(c_id, r_id, check_author=True):
+def get_room(h_id, r_id, check_author=True):
     # Get a connection to the database
     # Then search the database to see if a room exists which:
-    # Has the id of the selected room, and has a calculator_id equal to the supplied c_id
+    # Has the id of the selected room, and has a house_id equal to the supplied c_id
     room = get_database().execute(
-        'SELECT r.id, calculator_id, r.name'
-        ' FROM room r JOIN calculator c ON r.calculator_id = c.id '
-        ' WHERE c.id = ? AND r.id = ?',
-        (c_id, r_id)
+        'SELECT r.id, house_id, r.name'
+        ' FROM room r JOIN house h ON r.house_id = h.id '
+        ' WHERE h.id = ? AND r.id = ?',
+        (h_id, r_id)
     ).fetchone()
 
     # If the room does not exist:
-    # Which means that a room with the specified id, which is 'within' the specified calculator
+    # Which means that a room with the specified id, which is 'within' the specified house
     if room is None:
         abort(404, f"Room id: {r_id} doesn't exist.") # abort will raise a special exception that returns HTTP status code
 
-    # If we want to check the calculator, and the calculator the room is within, is not the same as the calculator passed to it,
+    # If we want to check the house, and the house the room is within, is not the same as the house passed to it,
     # then abort with an error
-    if check_author and room['calculator_id'] != c_id:
+    if check_author and room['house_id'] != h_id:
         abort(403, "You are not the owner of this room.")
 
     return room

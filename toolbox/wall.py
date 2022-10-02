@@ -2,6 +2,8 @@
 #################################### Imports ############################################
 #########################################################################################
 
+from enum import Enum
+import math
 from flask import (
     Blueprint, flash, g, get_template_attribute, redirect, render_template, request, url_for
 )
@@ -9,6 +11,55 @@ from werkzeug.exceptions import abort
 
 from toolbox.authentication import login_required
 from toolbox.database import get_database
+
+#########################################################################################
+#################################### Classes ##########################################
+#########################################################################################
+
+class Shape(Enum):
+    """Shapes store a lambda function used to evaluate their area
+    They can then be easily calculated if I store a shape object on a wall/obstacles/etc. 
+    """
+    SQUARE = lambda b: pow(b, 2)
+    RECTANGLE = lambda b, h: b * h
+    PARALLELOGRAM = lambda b, h: b * h
+    TRAPEZOID = lambda b, h, a: ((a + b) / 2) * h
+    TRIANGLE = lambda b, h: 0.5 * (b * h)
+    ELLIPSE = lambda b, a: math.pi * (a*b)
+    CIRCLE = lambda r: math.pi * pow(r, 2)
+    SEMICIRCLE = lambda r: (math.pi * pow(r, 2)) / 2
+    
+    def __call__(self, args):
+        """Override the usual call method to instead allow for the supplying of a variety of multiple args.
+        These args are then passed to the matching lambda function to calculate the respective area. 
+        """
+        return self.value[0](args)
+    
+     @classmethod
+    def to_shape(self, shape_name):
+        """This is a class method, meaning it does not need to be called on a Shape object.
+        The method is passed a string, which it will then attempt to return a matching shape for.  
+        Error handling is not needed, because the user will only ever select from a drop down. 
+        """
+        match shape_name:
+            case "square":
+                return Shape.SQUARE
+            case "rectangle":
+                return Shape.RECTANGLE
+            case "parallelogram":
+                return Shape.PARALLELOGRAM
+            case "trapezoid":
+                return Shape.TRAPEZOID
+            case "triangle":
+                return Shape.TRIANGLE
+            case "ellipse":
+                return Shape.ELLIPSE
+            case "circle":
+                return Shape.CIRCLE
+            case "semicircle":
+                return Shape.SEMICIRCLE
+            case _:
+                return None
 
 #########################################################################################
 #################################### Blueprint ##########################################
@@ -57,7 +108,7 @@ def create(r_id):
     # An array of valid shapes. 
     # Used to define a drop down menu in html
     # Should swap to enum later
-    shapes = ["Square", "Rectangle", "Parallelogram"]
+    shapes = ["Square", "Rectangle", "Parallelogram", "Trapezoid", "Triangle", "Ellipse", "Circle", "Semicircle"]
     
     if request.method == 'POST':
         # Posts consist of a title and body
@@ -122,8 +173,37 @@ def get_paint():
     
     return paints
 
+
+def define_square():
+    height = request.form['height']
+    
+    error = None
+    
+    if height is None:
+        error('A height must be entered')
+        
+    
+
 def get_surface_area(wall_shape):
     surface_area = 0 
+    
+    shape = Shape.to_shape(wall_shape)
+    
+    if shape is Shape.SQUARE:
+        
+    elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
+        pass
+    elif shape is Shape.TRAPEZOID:
+        pass
+    elif shape is Shape.ELLIPSE:
+        pass
+    elif shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
+        pass
+    else:
+        return 0 
+    
+    
+    
     
     if wall_shape == 'Square':
         height = request.form['name']

@@ -22,7 +22,7 @@ The second, is a button which allows the user to delete the post instead.
     <input type="submit" value="Save">
   </form>
   <hr>
-  <form action="{{ url_for('room.delete', c_id=calculator_id, r_id=room['id']) }}" method="post">
+  <form action="{{ url_for('room.delete', h_id=house_id, r_id=room['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');"> <!--Uses javascript to display a delete prompt-->
   </form>
 {% endblock %}

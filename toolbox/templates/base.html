@@ -28,7 +28,7 @@ If there are any flashed messages, then they will be displayed by this code.
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
-        <li><a href="{{ url_for('calculator.index') }}">Calculators</a>
+        <li><a href="{{ url_for('house.index') }}">Houses</a>
         <li><a href="{{ url_for('weather.get_weather') }}">Is it a good day to paint?</a>
         {% if g.user['id'] %}
           <li><a href="{{ url_for('paint.index') }}">Edit Paints</a>
