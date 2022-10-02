@@ -1,0 +1,22 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+{% block header %}
+  <h1>{% block title %}Wall Details{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--input tags are required, which will prevent the browser from submitting the form until they are filled.-->
+<!--The content block retrieves the login information from the user.
+This is requested in the blog blueprint-->
+{% block content %}
+  <form method="post">
+    {% if wall_shape == 'square' %}
+        <label for="dim_one">Length:</label>
+        <input name="dim_one" id="dim_one" value="{{ request.form['dim_one'] }}" required>
+    {% endif %}
+    <input type="submit" value="Next">
+  </form>
+{% endblock %}

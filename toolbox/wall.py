@@ -4,6 +4,7 @@
 
 from enum import Enum
 import math
+from tabnanny import check
 from flask import (
     Blueprint, flash, g, get_template_attribute, redirect, render_template, request, url_for
 )
@@ -125,11 +126,6 @@ def create(r_id):
         
         if not paint:
             error = 'A paint must be chosen.'
-        else:
-            try:
-                paint = int(paint)
-            except:
-                 error = ('Does not return an int: %s' % paint[0])
             
         if not shape:
             error = 'A shape must be chosen.'
@@ -140,69 +136,60 @@ def create(r_id):
         else:
             # If there was no error, then get a connection to the database
             database = get_database()
-                      
+
             # Insert the new wall into the wall table within the database 
             database.execute(
                 'INSERT INTO wall (name, room_id, paint_id, shape, surface)'
                 ' VALUES (?, ?, ?, ?, ?)',
-                (name, r_id, paint, shape, 0)
+                (name, r_id, paint, shape, -1)
             )
             database.commit()
             
+            w_id = database.execute(
+                'SELECT id FROM wall WHERE surface = -1'
+            ).fetchone()
+            
             # Redirect the user back to the index page
-            return redirect(url_for('wall.index', r_id=r_id))
+            return redirect(url_for('wall.wall_details', r_id=r_id, w_id=w_id['id'], wall_shape=shape))
 
     # If it was unsucessful, then return the user back to the create page
     return render_template('wall/create.html', paints=paints, shapes=shapes)
 
-#########################################################################################
-######################################## Functions ######################################
-#########################################################################################
-
-def get_paint():
-    """This function is used to retrieve a dictionary containing all of the paint from the paint database. 
-    """
-    
-    # Return a connection to the database 
-    database = get_database()
-                      
-    # We want to fetch all the information from every paint in the paint table 
-    paints = database.execute(
-        'SELECT id, name FROM paint'
-    ).fetchall()
-    
-    return paints
-
-
-def define_square(shape):
-    height = request.form['height']
-    
-    error = None
-    
-    if height is None:
-        error('A height must be entered')
-        
-    if error is not None:
-        flash(error)
-    else:
-        pass
-    
-        
-
-
-def get_surface_area(wall_shape):
+@blueprint.route('/<int:r_id>/room/wall/create/<int:w_id><string:wall_shape>/details', methods=('GET', 'POST'))
+@login_required # Calls the login_required() function from authentication. Must be logged in. 
+def wall_details(r_id, w_id, wall_shape):
     surface_area = 0 
-    dimensions = []
     
-    dimensions[0] = request.form('dim_one')
-    dimensions[1] = request.form('dim_two')
-    dimensions[2] = request.form('dim_three')
+    dimensions = [0, 0, 0]
     
+    dimension[0] = request.form['dim_one']
+
     
-    shape = Shape.to_shape(wall_shape)
+    error = None 
+        
+    shape = Shape.to_shape(wall_shape.lower())
+
     
     if shape is Shape.SQUARE:
-        pass  
+        
+        dimension = check_measurement_input(dimension)
+        
+        if isinstance(dimension, float):
+            surface_area = shape(dimension)
+            
+            database = get_database()
+            # With that connection, update the house in the house table, with the supplied parameters
+            # We update house WHERE its id equal to the supplied id. 
+            database.execute(
+                'UPDATE wall SET surface = ?'
+                ' WHERE id = ?',
+                (surface_area, w_id)
+            )
+            database.commit()
+            
+        else:
+            error = dimension
+          
     elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
         pass
     elif shape is Shape.TRAPEZOID:
@@ -212,4 +199,46 @@ def get_surface_area(wall_shape):
     elif shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
         pass
     else:
-        return 0 
+        return "tee hee" 
+    
+    if error is not None:
+        flash(error)
+    else: 
+        return render_template('wall/index.html', r_id=r_id)
+    
+    return redirect(url_for('wall/wall_details.html', r_id=r_id, w_id=w_id['id'], wall_shape=wall_shape.lower()))
+
+#########################################################################################
+######################################## Functions ######################################
+#########################################################################################
+
+def get_paint():
+    """This function is used to retrieve a dictionary containing all of the paint from the paint database. 
+    """
+    # Return a connection to the database 
+    database = get_database()
+    
+    # We want to fetch all the information from every paint in the paint table 
+    paints = database.execute(
+        'SELECT id, name FROM paint'
+    ).fetchall()
+    
+    return paints
+
+def check_measurement_input(input):
+    if input is None:
+            return 'Measurement cannot be left empty'
+    else:
+        try:
+            input = float(input)
+        except:
+            return 'Measurement must be a number'
+        else: 
+            if input <= 0:
+                return 'Measurement must be a positive number greater than 0'
+            else:
+                return input
+    
+    
+    
+
