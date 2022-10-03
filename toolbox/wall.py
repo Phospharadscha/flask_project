@@ -95,12 +95,12 @@ def index(r_id):
     ).fetchall()
 
     obstacles = get_database().execute(
-        'SELECT wall_id FROM obstacle'
+        'SELECT id, wall_id FROM obstacle'
     ).fetchall()
 
-    obstacles_per_wall = {}
+    obstacles_per_wall = {0 : 0}
     for obstacle in obstacles:
-        obstacles_per_wall[obstacles['wall_id']] += 1
+        obstacles_per_wall[obstacles['id']] += 1
 
     paints = get_paint()
     
