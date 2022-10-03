@@ -4,6 +4,7 @@
 
 from enum import Enum
 import math
+from . import wall
 from tabnanny import check
 from flask import (
     Blueprint, flash, g, get_template_attribute, redirect, render_template, request, url_for
@@ -234,6 +235,8 @@ def obstacle_details(w_id, o_id, obstacle_shape):
                     error = dimensions[2]
             else:
                 return "Error: Shape Not Found" 
+
+            wall.update_surface(w_id)
     
             return redirect(url_for('obstacle.index', w_id=w_id))
     

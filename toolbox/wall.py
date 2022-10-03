@@ -142,9 +142,9 @@ def create(r_id):
 
             # Insert the new wall into the wall table within the database 
             database.execute(
-                'INSERT INTO wall (name, room_id, paint_id, shape, surface)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (name, r_id, paint, shape, -1)
+                'INSERT INTO wall (name, room_id, paint_id, shape, surface, original_surface)'
+                ' VALUES (?, ?, ?, ?, ?, ?)',
+                (name, r_id, paint, shape, -1, -1)
             )
             database.commit()
             
@@ -191,9 +191,9 @@ def wall_details(r_id, w_id, wall_shape):
                     # With that connection, update the house in the house table, with the supplied parameters
                     # We update house WHERE its id equal to the supplied id. 
                     database.execute(
-                        'UPDATE wall SET surface = ?'
+                        'UPDATE wall SET surface = ?, original_surface = ?'
                         ' WHERE id = ?',
-                        (surface_area, w_id)
+                        (surface_area, surface_area, w_id)
                     )
                     database.commit()
     
@@ -424,6 +424,33 @@ def get_wall(w_id, r_id, check_author=True):
 
     return wall   
 
+def update_surface(w_id):
+    database = get_database()
+
+    surfaces = database.execute(
+        'SELECT surface, original_surface FROM wall'
+        ' WHERE id = ?',
+        (w_id,)
+    ).fetchone()
+
+    obstacles = database.execute(
+        'SELECT surface FROM obstacle'
+        ' WHERE wall_id = ?',
+        (w_id,)
+    ).fetchall()
+
+    surface = surfaces['original_surface']
+
+    for obstacle in obstacles:
+       surface -= obstacle['surface']
+
+    database.execute(
+        'UPDATE wall SET surface = ?'
+        ' WHERE id = ?',
+        (surface, w_id)
+    )
+    database.commit()
+    
 def get_surface(w_id, surface):
     database = get_database()
 

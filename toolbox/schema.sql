@@ -68,6 +68,7 @@ CREATE TABLE wall (
   name TEXT NOT NULL,
   shape TEXT NOT NULL,  
   surface REAL NOT NULL,
+  original_surface REAL NOT NULL, 
   FOREIGN KEY (room_id) REFERENCES room (id),
   FOREIGN KEY (paint_id) REFERENCES paint (id)
 );
