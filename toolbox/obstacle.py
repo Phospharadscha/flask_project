@@ -282,7 +282,7 @@ def update_name(o_id, w_id):
             database.commit()
             
             # redirect the user back to the index
-            return redirect(url_for('obstacle.index', o_id=o_id))
+            return redirect(url_for('obstacle.index', w_id=w_id))
 
     # If the house could not be updated, then redirect them back to the update page again
     return render_template('obstacle/update.html', obstacle=obstacle_name, o_id=o_id, w_id=w_id)

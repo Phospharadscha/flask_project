@@ -185,6 +185,7 @@ def wall_details(r_id, w_id, wall_shape):
     
                 if isinstance(dimensions[0], float):
                     surface_area = shape(dimensions[0])
+                    surface_area = get_surface(w_id, surface_area)
     
                     database = get_database()
                     # With that connection, update the house in the house table, with the supplied parameters
@@ -204,7 +205,8 @@ def wall_details(r_id, w_id, wall_shape):
     
                 if isinstance(dimensions[0], float) and isinstance(dimensions[1], float):
                     surface_area = shape(dimensions[0], dimensions[1])
-    
+                    surface_area = get_surface(w_id, surface_area)
+
                     database = get_database()
                     # With that connection, update the house in the house table, with the supplied parameters
                     # We update house WHERE its id equal to the supplied id. 
@@ -225,7 +227,8 @@ def wall_details(r_id, w_id, wall_shape):
     
                 if isinstance(dimensions[0], float) and isinstance(dimensions[1], float) and isinstance(dimensions[2], float):
                     surface_area = shape(dimensions[0], dimensions[1], dimensions[2])
-    
+                    surface_area = get_surface(w_id, surface_area)
+
                     database = get_database()
                     # With that connection, update the house in the house table, with the supplied parameters
                     # We update house WHERE its id equal to the supplied id. 
@@ -421,3 +424,17 @@ def get_wall(w_id, r_id, check_author=True):
 
     return wall   
 
+def get_surface(w_id, surface):
+    database = get_database()
+
+    obstacles = database.execute(
+        'SELECT surface FROM obstacle'
+        ' WHERE wall_id = ?',
+        (w_id,)
+    ).fetchall()
+
+    if obstacles is not None:
+        for obstacle in obstacles:
+            surface -= obstacle['surface']
+    
+    return surface

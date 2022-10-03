@@ -23,6 +23,7 @@ loop.last is used inside Jinja to display a line after each posts, except the la
       <header>
         <div>
           <h1>{{ obstacle['name'] }}</h1>
+          <b1>{{ obstacle['surface'] }}</b1>
         </div>
         <a class="action" href="{{ url_for('obstacle.update_name', w_id=w_id, o_id=obstacle['id']) }}">Edit name</a>
         <a class="action" href="{{ url_for('obstacle.update_shape', w_id=w_id, o_id=obstacle['id']) }}">Edit dimensions</a>
