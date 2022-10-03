@@ -300,6 +300,60 @@ def delete(w_id, o_id):
     database.commit()
     # When a house has been deleted, redirect to the index
     return redirect(url_for('obstacle.index', w_id=w_id))
+
+@blueprint.route('/<int:w_id>/wall/<int:o_id>/obstacle/update_shape', methods=('GET', 'POST'))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def update_shape(w_id, o_id):
+    # An array of valid shapes. 
+    # Used to define a drop down menu in html
+    # Should swap to enum later
+    shapes = ["Square", "Rectangle", "Parallelogram", "Trapezoid", "Triangle", "Ellipse", "Circle", "Semicircle"]
+
+    # Retrieve a connection to the database
+    database = get_database()    
+    
+    # With that connection, update the house in the house table, with the supplied parameters
+    # We update house WHERE its id equal to the supplied id. 
+
+    obstacle_name = get_database().execute(
+        'SELECT name'
+        ' FROM obstacle WHERE id = ?',
+        (o_id, )
+    ).fetchone()
+
+    database.commit()
+
+
+    if request.method == 'POST':
+        # Posts consist of a title and body
+        shape = request.form.get("shape") 
+        
+        # Stores any errors that may arise. 
+        error = None
+
+        # A wall must be given a name
+        if not shape:
+            error = 'A shape must be chosen.'
+ 
+        # If there as an error then flash it, so it can be displayed by the page
+        if error is not None:
+            flash(error)
+        else:            
+            # With that connection, update the house in the house table, with the supplied parameters
+            # We update house WHERE its id equal to the supplied id. 
+            database.execute(
+                'UPDATE obstacle SET surface = ?, shape = ?'
+                ' WHERE id = ?',
+                (-1, shape, o_id)
+            )
+            database.commit()
+            
+            # Redirect the user back to the index page
+            return redirect(url_for('obstacle.obstacle_details', obstacle=obstacle_name, w_id=w_id, o_id=o_id, obstacle_shape=shape))
+
+    # If it was unsucessful, then return the user back to the create page
+    return render_template('obstacle/update_shape.html', obstacle=obstacle_name, shapes=shapes, w_id=w_id, o_id=o_id)
+
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################

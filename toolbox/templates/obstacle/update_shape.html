@@ -1,0 +1,28 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Will display the title of the post-->
+{% block header %}
+  <h1>{% block title %}Edit "{{ obstacle['name'] }}"{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--
+This content block has two forms. 
+
+The first, update, posts the edited data to the current page. Updates the post. 
+The second, is a button which allows the user to delete the post instead. 
+-->
+{% block content %}
+  <form method="post">
+    <select name="shape">
+        <option value="{{shapes[0]}}" selected>{{shapes[0]}}</option>
+        {% for shape in shapes[1:] %}
+            <option value="{{shape}}">{{shape}}</option>
+        {% endfor %}
+      </select>
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
