@@ -354,10 +354,6 @@ def update_shape(r_id, w_id):
     # If it was unsucessful, then return the user back to the create page
     return render_template('wall/update_shape.html', wall=wall_name, shapes=shapes, r_id=r_id, w_id=w_id)
 
-
-
-
-
 @blueprint.route('/<int:r_id>/room/wall/<int:w_id>/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def delete(r_id, w_id):

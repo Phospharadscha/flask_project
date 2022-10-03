@@ -40,7 +40,7 @@ def create_app(test_config=None):
         pass
     
     # Import modules from the root directory
-    from . import database, authentication, paint, weather, room, wall, house
+    from . import database, authentication, paint, weather, room, wall, house, obstacle
     
     # This registers two functions with the application: 
     # - app.teardown_appcontext(close_db)   
@@ -67,6 +67,9 @@ def create_app(test_config=None):
     
     # Import and register wall blueprint
     app.register_blueprint(wall.blueprint)
+
+        # Import and register obstacle blueprint
+    app.register_blueprint(obstacle.blueprint)
 
 
     return app
