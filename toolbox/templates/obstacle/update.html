@@ -1,0 +1,28 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+<!--Will display the title of the post-->
+{% block header %}
+  <h1>{% block title %}Edit "{{ obstacle['name'] }}"{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--
+This content block has two forms. 
+
+The first, update, posts the edited data to the current page. Updates the post. 
+The second, is a button which allows the user to delete the post instead. 
+-->
+{% block content %}
+  <form method="post">
+    <label for="name">Obstacle name (Leave empty if you do not wish to update):</label>
+    <input name="name" id="name" value="{{ request.form['name'] }}">
+    <input type="submit" value="Save">
+  </form>
+  <hr>
+  <form action="{{ url_for('obstacle.delete', o_id=o_id, w_id=w_id) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');"> <!--Uses javascript to display a delete prompt-->
+  </form>
+{% endblock %}

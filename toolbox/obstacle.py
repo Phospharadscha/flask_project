@@ -239,8 +239,67 @@ def obstacle_details(w_id, o_id, obstacle_shape):
     
     return render_template('obstacle/obstacle_details.html', w_id=w_id, o_id=o_id, obstacle_shape=obstacle_shape.lower())
 
+@blueprint.route('/<int:w_id>/wall/<int:o_id>/update_name', methods=('GET', 'POST'))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def update_name(o_id, w_id):
+    """This view is used to allow users to update their created houses.
+    It is passed the id of the house which the user wants to update
+    """
 
+    # Retrieve a connection to the database
+    database = get_database()    
+        # With that connection, update the house in the house table, with the supplied parameters
+        # We update house WHERE its id equal to the supplied id. 
+    obstacle_name = get_database().execute(
+        'SELECT name'
+        ' FROM obstacle WHERE id = ?',
+        (o_id,)
+    ).fetchone()
 
+    database.commit()
+
+    if request.method == 'POST':
+        # Retrieve a name for the house from the browser
+        name = request.form['name']
+        
+        # Used to store errors
+        error = None
+
+        # If no name is given then that is an error
+        if not name:
+            return redirect(url_for('obstacle.index', w_id=w_id))
+
+        if error is not None:
+            flash(error)
+        else:
+            # With that connection, update the house in the house table, with the supplied parameters
+            # We update house WHERE its id equal to the supplied id. 
+            database.execute(
+                'UPDATE obstacle SET name = ?'
+                ' WHERE id = ?',
+                (name, o_id)
+            )
+            database.commit()
+            
+            # redirect the user back to the index
+            return redirect(url_for('obstacle.index', o_id=o_id))
+
+    # If the house could not be updated, then redirect them back to the update page again
+    return render_template('obstacle/update.html', obstacle=obstacle_name, o_id=o_id, w_id=w_id)
+
+@blueprint.route('/<int:w_id>/wall/<int:o_id>/delete', methods=('POST',))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def delete(w_id, o_id):
+    # Retrieves the house by the specified id
+    obstacle = get_obstacle(o_id, w_id)
+    
+    # Get a connection to the database
+    database = get_database()
+  
+    database.execute('DELETE FROM obstacle WHERE id = ?', (o_id,))
+    database.commit()
+    # When a house has been deleted, redirect to the index
+    return redirect(url_for('obstacle.index', w_id=w_id))
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
@@ -259,3 +318,24 @@ def check_measurement_input(input):
             else:
                 return input
  
+def get_obstacle(o_id, w_id, check_author=True):
+    # Get a connection to the database
+    # Then search the database to see if a room exists which:
+    # Has the id of the selected room, and has a house_id equal to the supplied c_id
+    obstacle = get_database().execute(
+        'SELECT * FROM obstacle'
+        ' WHERE id = ? AND wall_id = ?',
+        (o_id, w_id)
+    ).fetchone()
+
+    # If the room does not exist:
+    # Which means that a room with the specified id, which is 'within' the specified house
+    if obstacle is None:
+        abort(404, f"Obstacle id: {o_id} doesn't exist.") # abort will raise a special exception that returns HTTP status code
+
+    # If we want to check the house, and the house the room is within, is not the same as the house passed to it,
+    # then abort with an error
+    if check_author and obstacle['wall_id'] != w_id:
+        abort(403, "You are not the owner of this obstacle.")
+
+    return obstacle
