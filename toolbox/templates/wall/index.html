@@ -23,6 +23,13 @@ loop.last is used inside Jinja to display a line after each posts, except the la
       <header>
         <div>
           <h1>{{ wall['name'] }}</h1>
+          {% for paint in paints %}
+            {% if wall['paint_id'] == paint['id'] %}
+              <b1>{{ paint['name'] }}</b1>
+            {% endif %}
+          {% endfor %}
+          <b1>{{ wall['surface'] }}</b1>
+
         </div>
         {% if room_id == wall['room_id'] %}
 

@@ -87,14 +87,16 @@ def index(r_id):
     # From the database, fetch walls from the wall table.
     # We only want walls with a room_id equal to the supplied id
     walls = get_database().execute(
-        'SELECT w.id, room_id, w.name'
+        'SELECT w.id, room_id, w.name, paint_id, surface'
         ' FROM wall w JOIN room r ON w.room_id = r.id'
         ' WHERE r.id = ? ORDER BY w.id DESC',
         (r_id,)
     ).fetchall()
+
+    paints = get_paint()
     
     # Returns a command to render the specified template, and passes it the walls as a parameter. 
-    return render_template('wall/index.html', walls=walls, room_id=r_id)
+    return render_template('wall/index.html', walls=walls, room_id=r_id, paints=get_paint())
 
 @blueprint.route('/<int:r_id>/room/wall/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
