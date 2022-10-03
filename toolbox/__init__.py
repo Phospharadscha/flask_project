@@ -39,6 +39,11 @@ def create_app(test_config=None):
     except OSError:
         pass
     
+    # a simple page that says hello
+    @app.route('/hello')
+    def hello():
+        return 'Hello, World!'
+    
     # Import modules from the root directory
     from . import database, authentication, paint, weather, room, wall, house, obstacle
     
