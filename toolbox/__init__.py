@@ -4,8 +4,6 @@
 import os
 from flask import Flask
 
-from . import house
-
 #########################################################################################
 #################################### Factory Function ###################################
 #########################################################################################
@@ -73,7 +71,7 @@ def create_app(test_config=None):
     # Import and register wall blueprint
     app.register_blueprint(wall.blueprint)
 
-        # Import and register obstacle blueprint
+    # Import and register obstacle blueprint
     app.register_blueprint(obstacle.blueprint)
 
 

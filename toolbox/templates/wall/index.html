@@ -30,7 +30,7 @@ loop.last is used inside Jinja to display a line after each posts, except the la
           {% endfor %}
           <b1>{{ wall['surface'] }}</b1>
           {% for obstacle in obstacles %}
-            {% if obstacle.key.name == wall['id'] %}
+            {% if obstacle['wall_id'] == wall['id'] %}
               <b1>{{ obstacle[wall['id']] }}</b1>
             {% endif %}
           {% endfor %}

@@ -98,9 +98,14 @@ def index(r_id):
         'SELECT id, wall_id FROM obstacle'
     ).fetchall()
 
+    # Wall id : number
     obstacles_per_wall = {0 : 0}
+    
     for obstacle in obstacles:
-        obstacles_per_wall[obstacles['id']] += 1
+        if obstacle['wall_id'] not in obstacles_per_wall: 
+            obstacles_per_wall[obstacle['wall_id']] = 1
+        else:
+            obstacles_per_wall[obstacle['wall_id']] += 1
 
     paints = get_paint()
     
