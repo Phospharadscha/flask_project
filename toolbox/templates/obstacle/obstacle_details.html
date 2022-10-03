@@ -1,0 +1,46 @@
+<!--Allows users to create a post-->
+<!--Tells Jinja that this template will replace blocks from base.html-->
+{% extends 'base.html' %}
+
+<!--Everything within this block will be placed in the header section of the base template-->
+{% block header %}
+  <h1>{% block title %}Obstacle Details{% endblock %}</h1>
+{% endblock %}
+
+<!--Replaces the content block of base.hmtl-->
+<!--input tags are required, which will prevent the browser from submitting the form until they are filled.-->
+<!--The content block retrieves the login information from the user.
+This is requested in the blog blueprint-->
+{% block content %}
+  <form method="post">
+    {% if obstacle_shape == 'square' %}
+        <label for="dim_one">Length:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+    {% endif %}
+    {% if obstacle_shape == 'circle' or obstacle_shape == 'semicircle' %}
+        <label for="dim_one">Radius:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+    {% endif %}
+    {% if obstacle_shape == 'rectangle' or obstacle_shape == 'triangle' or obstacle_shape == 'parallelogram' %}
+        <label for="dim_one">Width:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+        <label for="dim_two">Height:</label>
+        <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+    {% endif %}
+    {% if obstacle_shape == 'trapezoid' %}
+        <label for="dim_one">Bottom base:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+        <label for="dim_two">Top base:</label>
+        <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+        <label for="dim_three">Height:</label>
+        <input name='dim_three' id='dim_three' value="{{ request.form['dim_three'] }}" required>
+    {% endif %}
+    {% if obstacle_shape == 'ellipse' %}
+      <label for="dim_one">Horizontal radius:</label>
+      <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+      <label for="dim_two">Vertical Radius:</label>
+      <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+    {% endif %}
+    <input type="submit" value="Next">
+  </form>
+{% endblock %}

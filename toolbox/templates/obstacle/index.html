@@ -6,9 +6,9 @@
 <!--Userful pattern: Place the title in the header-->
 <!--When the user is logged in, the header block adds a link to the create view, which will be used to create posts-->
 {% block header %}
-  <h1>{% block title %}Walls{% endblock %}</h1>
+  <h1>{% block title %}Obstacles{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('wall.create', r_id=r_id) }}">New</a>
+  <a class="action" href="{{ url_for('obstacle.create', w_id=w_id) }}">New</a>
   {% endif %}
 {% endblock %}
 
@@ -18,22 +18,13 @@ If the user is an author of the post, then they are given the option to edit it.
 loop.last is used inside Jinja to display a line after each posts, except the last one. 
 -->
 {% block content %}
-  {% for wall in walls %}
+  {% for obstacle in obstacles %}
     <article class="wall">
       <header>
         <div>
-          <h1>{{ wall['name'] }}</h1>
-          {% for paint in paints %}
-            {% if wall['paint_id'] == paint['id'] %}
-              <b1>{{ paint['name'] }}</b1>
-            {% endif %}
-          {% endfor %}
-          <b1>{{ wall['surface'] }}</b1>
+          <h1>{{ obstacle['name'] }}</h1>
         </div>
-        <a class="action" href="{{ url_for('obstacle.index', w_id=wall['id']) }}">View obstacles</a>
-          <a class="action" href="{{ url_for('wall.update_name_paint', r_id=r_id, w_id=wall['id']) }}">Edit name/paint</a>
-          <a class="action" href="{{ url_for('wall.update_shape', r_id=r_id, w_id=wall['id']) }}">Edit dimensions</a>
-  
+ 
       </header>
     </article>
     {% if not loop.last %}
