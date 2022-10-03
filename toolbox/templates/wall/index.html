@@ -29,6 +29,7 @@ loop.last is used inside Jinja to display a line after each posts, except the la
             {% endif %}
           {% endfor %}
           <b1>{{ wall['surface'] }}</b1>
+          <b1>{{ obstacles[wall['id']] }}</b1>
         </div>
         <a class="action" href="{{ url_for('obstacle.index', w_id=wall['id']) }}">View obstacles</a>
           <a class="action" href="{{ url_for('wall.update_name_paint', r_id=r_id, w_id=wall['id']) }}">Edit name/paint</a>

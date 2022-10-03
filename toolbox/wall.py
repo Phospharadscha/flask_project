@@ -94,10 +94,18 @@ def index(r_id):
         (r_id,)
     ).fetchall()
 
+    obstacles = get_database().execute(
+        'SELECT wall_id FROM obstacle'
+    ).fetchall()
+
+    obstacles_per_wall = {}
+    for obstacle in obstacles:
+        obstacles_per_wall[obstacles['wall_id']] += 1
+
     paints = get_paint()
     
     # Returns a command to render the specified template, and passes it the walls as a parameter. 
-    return render_template('wall/index.html', walls=walls, r_id=r_id, paints=get_paint())
+    return render_template('wall/index.html', walls=walls, r_id=r_id, paints=get_paint(), obstacles=obstacles_per_wall)
 
 @blueprint.route('/<int:r_id>/room/wall/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
@@ -450,7 +458,7 @@ def update_surface(w_id):
         (surface, w_id)
     )
     database.commit()
-    
+
 def get_surface(w_id, surface):
     database = get_database()
 
