@@ -17,6 +17,30 @@ This is requested in the blog blueprint-->
         <label for="dim_one">Length:</label>
         <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
     {% endif %}
+    {% if wall_shape == 'circle' or wall_shape == 'semicircle' %}
+        <label for="dim_one">Radius:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+    {% endif %}
+    {% if wall_shape == 'rectangle' or wall_shape == 'triangle' or wall_shape == 'parallelogram' %}
+        <label for="dim_one">Width:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+        <label for="dim_two">Height:</label>
+        <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+    {% endif %}
+    {% if wall_shape == 'trapezoid' %}
+        <label for="dim_one">Bottom base:</label>
+        <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+        <label for="dim_two">Top base:</label>
+        <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+        <label for="dim_three">Height:</label>
+        <input name='dim_three' id='dim_three' value="{{ request.form['dim_three'] }}" required>
+    {% endif %}
+    {% if wall_shape == 'ellipse' %}
+      <label for="dim_one">Horizontal radius:</label>
+      <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
+      <label for="dim_two">Vertical Radius:</label>
+      <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
+    {% endif %}
     <input type="submit" value="Next">
   </form>
 {% endblock %}

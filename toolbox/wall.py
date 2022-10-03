@@ -24,9 +24,9 @@ class Shape(Enum):
     SQUARE = lambda b: pow(b, 2)
     RECTANGLE = lambda b, h: b * h
     PARALLELOGRAM = lambda b, h: b * h
-    TRAPEZOID = lambda b, h, a: ((a + b) / 2) * h
+    TRAPEZOID = lambda a, b, h: ((a + b) / 2) * h
     TRIANGLE = lambda b, h: 0.5 * (b * h)
-    ELLIPSE = lambda b, a: math.pi * (a*b)
+    ELLIPSE = lambda a, b: math.pi * (a*b)
     CIRCLE = lambda r: math.pi * pow(r, 2)
     SEMICIRCLE = lambda r: (math.pi * pow(r, 2)) / 2
     
@@ -163,11 +163,11 @@ def wall_details(r_id, w_id, wall_shape):
     surface_area = 0 
     
     dimensions = [0, 0, 0]
-    
-    
-    
+
     if request.method == 'POST':
         dimensions[0] = request.form.get('dim_one')
+        dimensions[1] = request.form.get('dim_two')
+        dimensions[2] = request.form.get('dim_three')
     
         
         error = None 
@@ -178,7 +178,7 @@ def wall_details(r_id, w_id, wall_shape):
         if error is not None:
             flash(error)
         else: 
-            if shape is Shape.SQUARE:
+            if shape is Shape.SQUARE or shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
             
                 dimensions[0] = check_measurement_input(dimensions[0])
     
@@ -197,16 +197,50 @@ def wall_details(r_id, w_id, wall_shape):
     
                 else:
                     error = dimensions[0]
-            elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE:
-                pass
+            elif shape is Shape.RECTANGLE or shape is Shape.PARALLELOGRAM or shape is Shape.TRIANGLE or shape is Shape.ELLIPSE:
+                dimensions[0] = check_measurement_input(dimensions[0])
+                dimensions[1] = check_measurement_input(dimensions[1])
+    
+                if isinstance(dimensions[0], float) and isinstance(dimensions[1], float):
+                    surface_area = shape(dimensions[0], dimensions[1])
+    
+                    database = get_database()
+                    # With that connection, update the house in the house table, with the supplied parameters
+                    # We update house WHERE its id equal to the supplied id. 
+                    database.execute(
+                        'UPDATE wall SET surface = ?'
+                        ' WHERE id = ?',
+                        (surface_area, w_id)
+                    )
+                    database.commit()
+    
+                else:
+                    error = dimensions[0]
+                    error = dimensions[1]
             elif shape is Shape.TRAPEZOID:
-                pass
-            elif shape is Shape.ELLIPSE:
-                pass
-            elif shape is Shape.CIRCLE or shape is Shape.SEMICIRCLE:
-                pass
+                dimensions[0] = check_measurement_input(dimensions[0])
+                dimensions[1] = check_measurement_input(dimensions[1])
+                dimensions[2] = check_measurement_input(dimensions[2])
+    
+                if isinstance(dimensions[0], float) and isinstance(dimensions[1], float) and isinstance(dimensions[2], float):
+                    surface_area = shape(dimensions[0], dimensions[1], dimensions[2])
+    
+                    database = get_database()
+                    # With that connection, update the house in the house table, with the supplied parameters
+                    # We update house WHERE its id equal to the supplied id. 
+                    database.execute(
+                        'UPDATE wall SET surface = ?'
+                        ' WHERE id = ?',
+                        (surface_area, w_id)
+                    )
+                    database.commit()
+    
+                else:
+                    error = dimensions[0]
+                    error = dimensions[1]
+                    error = dimensions[2]
             else:
-                return "tee hee" 
+                return "Error: Shape Not Found" 
     
             return redirect(url_for('wall.index', r_id=r_id))
     
