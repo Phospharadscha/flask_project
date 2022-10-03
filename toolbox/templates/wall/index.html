@@ -8,7 +8,7 @@
 {% block header %}
   <h1>{% block title %}Walls{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('wall.create', r_id=room_id) }}">New</a>
+    <a class="action" href="{{ url_for('wall.create', r_id=r_id) }}">New</a>
   {% endif %}
 {% endblock %}
 
@@ -29,11 +29,11 @@ loop.last is used inside Jinja to display a line after each posts, except the la
             {% endif %}
           {% endfor %}
           <b1>{{ wall['surface'] }}</b1>
-
         </div>
-        {% if room_id == wall['room_id'] %}
-
-        {% endif %}
+      
+          <a class="action" href="{{ url_for('wall.update_name_paint', r_id=r_id, w_id=wall['id']) }}">Edit name/paint</a>
+          <a class="action" href="{{ url_for('wall.update_shape', r_id=r_id, w_id=wall['id']) }}">Edit dimensions</a>
+  
       </header>
     </article>
     {% if not loop.last %}

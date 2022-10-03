@@ -86,6 +86,7 @@ def index(r_id):
     
     # From the database, fetch walls from the wall table.
     # We only want walls with a room_id equal to the supplied id
+    
     walls = get_database().execute(
         'SELECT w.id, room_id, w.name, paint_id, surface'
         ' FROM wall w JOIN room r ON w.room_id = r.id'
@@ -96,7 +97,7 @@ def index(r_id):
     paints = get_paint()
     
     # Returns a command to render the specified template, and passes it the walls as a parameter. 
-    return render_template('wall/index.html', walls=walls, room_id=r_id, paints=get_paint())
+    return render_template('wall/index.html', walls=walls, r_id=r_id, paints=get_paint())
 
 @blueprint.route('/<int:r_id>/room/wall/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
@@ -246,6 +247,131 @@ def wall_details(r_id, w_id, wall_shape):
     
     return render_template('wall/wall_details.html', r_id=r_id, w_id=w_id, wall_shape=wall_shape.lower())
 
+@blueprint.route('/<int:r_id>/room/wall/<int:w_id>/update_name_paint', methods=('GET', 'POST'))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def update_name_paint(r_id, w_id):
+    """This view is used to allow users to update their created houses.
+    It is passed the id of the house which the user wants to update
+    """
+
+    # Retrieve a connection to the database
+    database = get_database()    
+        # With that connection, update the house in the house table, with the supplied parameters
+        # We update house WHERE its id equal to the supplied id. 
+    wall_name = get_database().execute(
+        'SELECT name'
+        ' FROM wall WHERE id = ?',
+        (w_id, )
+    ).fetchone()
+
+    database.commit()
+
+    paints = get_paint()
+
+    if request.method == 'POST':
+        # Retrieve a name for the house from the browser
+        name = request.form['name']
+        paint = request.form['paint']
+        
+        # Used to store errors
+        error = None
+
+        # If no name is given then that is an error
+        if not name:
+            return redirect(url_for('wall.index', r_id=r_id))
+
+        if not paint:
+            error = 'Paint cannot be left blank'
+
+        if error is not None:
+            flash(error)
+        else:
+            # With that connection, update the house in the house table, with the supplied parameters
+            # We update house WHERE its id equal to the supplied id. 
+            database.execute(
+                'UPDATE wall SET name = ?, paint_id = ?'
+                ' WHERE id = ?',
+                (name, paint, w_id)
+            )
+            database.commit()
+            
+            # redirect the user back to the index
+            return redirect(url_for('wall.index', r_id=r_id))
+
+    # If the house could not be updated, then redirect them back to the update page again
+    return render_template('wall/update.html', wall=wall_name, w_id=w_id, r_id=r_id, paints=paints)
+
+@blueprint.route('/<int:r_id>/room/wall/<int:w_id>/update_shape', methods=('GET', 'POST'))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def update_shape(r_id, w_id):
+    # An array of valid shapes. 
+    # Used to define a drop down menu in html
+    # Should swap to enum later
+    shapes = ["Square", "Rectangle", "Parallelogram", "Trapezoid", "Triangle", "Ellipse", "Circle", "Semicircle"]
+
+    # Retrieve a connection to the database
+    database = get_database()    
+    
+    # With that connection, update the house in the house table, with the supplied parameters
+    # We update house WHERE its id equal to the supplied id. 
+
+    wall_name = get_database().execute(
+        'SELECT name'
+        ' FROM wall WHERE id = ?',
+        (w_id, )
+    ).fetchone()
+
+    database.commit()
+
+
+    if request.method == 'POST':
+        # Posts consist of a title and body
+        shape = request.form.get("shape") 
+        
+        # Stores any errors that may arise. 
+        error = None
+
+        # A wall must be given a name
+        if not shape:
+            error = 'A shape must be chosen.'
+ 
+        # If there as an error then flash it, so it can be displayed by the page
+        if error is not None:
+            flash(error)
+        else:            
+            # With that connection, update the house in the house table, with the supplied parameters
+            # We update house WHERE its id equal to the supplied id. 
+            database.execute(
+                'UPDATE wall SET surface = ?, Shape = ?'
+                ' WHERE id = ?',
+                (-1, shape, w_id)
+            )
+            database.commit()
+            
+            # Redirect the user back to the index page
+            return redirect(url_for('wall.wall_details', wall=wall_name, r_id=r_id, w_id=w_id, wall_shape=shape))
+
+    # If it was unsucessful, then return the user back to the create page
+    return render_template('wall/update_shape.html', wall=wall_name, shapes=shapes, r_id=r_id, w_id=w_id)
+
+
+
+
+
+@blueprint.route('/<int:r_id>/room/wall/<int:w_id>/delete', methods=('POST',))
+@login_required # Calls the login_required() function from authentication. Must be logged in
+def delete(r_id, w_id):
+    # Retrieves the house by the specified id
+    wall = get_wall(w_id, r_id)
+    
+    # Get a connection to the database
+    database = get_database()
+  
+    database.execute('DELETE FROM wall WHERE id = ?', (w_id,))
+    database.commit()
+    # When a house has been deleted, redirect to the index
+    return redirect(url_for('wall.index', r_id=r_id))
+
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
@@ -277,6 +403,25 @@ def check_measurement_input(input):
             else:
                 return input
     
-    
-    
+def get_wall(w_id, r_id, check_author=True):
+    # Get a connection to the database
+    # Then search the database to see if a room exists which:
+    # Has the id of the selected room, and has a house_id equal to the supplied c_id
+    wall = get_database().execute(
+        'SELECT * FROM wall'
+        ' WHERE id = ? AND room_id = ?',
+        (w_id, r_id)
+    ).fetchone()
+
+    # If the room does not exist:
+    # Which means that a room with the specified id, which is 'within' the specified house
+    if wall is None:
+        abort(404, f"Wall id: {w_id} doesn't exist.") # abort will raise a special exception that returns HTTP status code
+
+    # If we want to check the house, and the house the room is within, is not the same as the house passed to it,
+    # then abort with an error
+    if check_author and wall['room_id'] != r_id:
+        abort(403, "You are not the owner of this wall.")
+
+    return wall   
 
