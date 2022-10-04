@@ -34,9 +34,8 @@ def get_weather():
     if request.method == 'POST':
         target_city = request.form['city']
     
-    if target_city is None:
-        target_city = 'London'
     try:
+        
         request_data = {}
         request_data['q'] = target_city
         request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
@@ -51,6 +50,7 @@ def get_weather():
         
         return render_template('weather/index.html', title=f'Weather for: {target_city}', data=json.loads(request_data.read().decode('utf8')))
     except:
+        
         target_city = 'London'
         
         request_data = {}

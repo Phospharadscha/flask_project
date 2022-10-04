@@ -18,10 +18,10 @@ from toolbox.database import get_database
 #########################################################################################
 
 """Blueprint for the house. 
-The blog will:
-- List all posts
-- allow logged in users to create posts, 
-- allow the author of a post to edit or delete their post
+The house blueprint will:
+- List all houses
+- allow logged in users to create houses, 
+- allow the owner of a house to edit or delete their homes
 """
 blueprint = Blueprint('house', __name__)
 

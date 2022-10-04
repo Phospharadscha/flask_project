@@ -47,7 +47,7 @@ def create():
     """The view used to allow admins to enter paint into the database. 
     """
     if request.method == 'POST':
-        # Calculators only need to be passed a name
+
         name = request.form['name']
         price = request.form['price']
         volume = request.form['volume']
@@ -56,7 +56,6 @@ def create():
         # Stores any errors that may arise. 
         error = None
 
-        # name must be provided
         if not name:
             error = 'A name is required.'
 
@@ -92,7 +91,6 @@ def create():
             # If there was no error, then get a connection to the database
             database = get_database()
             
-            # Insert the calculator into the calculator table within the database 
             database.execute(
                 'INSERT INTO paint (name, price, volume, coverage)'
                 ' VALUES (?, ?, ?, ?)',
@@ -112,11 +110,10 @@ def update(p_id):
     """This view is used to allow users to update their created houses.
     It is passed the id of the house which the user wants to update
     """
-    # Return a house by id
+    
     paint = get_paint(p_id)
 
     if request.method == 'POST':
-        # Retrieve a name for the house from the browser
         name = request.form['name']
         price = request.form['price']
         volume = request.form['volume']
@@ -163,7 +160,6 @@ def update(p_id):
             # If there was no error, then get a connection to the database
             database = get_database()
             
-            # Insert the calculator into the calculator table within the database 
             database.execute(
                 'UPDATE paint SET name, price, volume, coverage'
                 ' WHERE id = ?',
@@ -180,17 +176,16 @@ def update(p_id):
 @blueprint.route('/<int:p_id>/paint/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def delete(p_id):
-    # Retrieves the house by the specified id
+
     paint = get_paint(p_id)
     
-    # Get a connection to the database
+
     database = get_database()
     
-    # From the house table, delete every house where the id equals the supplied id
+
     database.execute('DELETE FROM paint WHERE id = ?', (p_id,))
     database.commit()
     
-    # When a house has been deleted, redirect to the index
     return redirect(url_for('paint.index'))
 
 

@@ -51,9 +51,9 @@ def create_app(test_config=None):
     database.init_app(app)
     
     app.register_blueprint(house.blueprint)
-    # Blog does not have a url_prefix, so the index will be at '/'
-    # This makes the blog index the main index
-    #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for('blog.index') both generate the same url
+    # The house index does not have a url_prefix, so the index will be at '/'
+    # This makes the house index the main index
+    #  Associates the end-point name 'index' with the / url, so that url_for('index') or url_for(house.index') both generate the same url
     app.add_url_rule('/', endpoint='index') 
     
     # Import and register paint blueprint

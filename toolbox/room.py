@@ -18,7 +18,7 @@ from toolbox.database import get_database
 #################################### Blueprint ##########################################
 #########################################################################################
 
-"""Blueprint for the house. 
+"""Blueprint for the rooms. 
 The room will:
 - List all rooms
 - allow logged in users to create new rooms, 

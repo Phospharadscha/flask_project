@@ -83,10 +83,8 @@ def index(r_id):
     """The Index will display all walls, as outlined above
     The function is passed the id of the room it is contained in via the url.
     """
-    database = get_database() # Retrieve a connection to the database
     
-    # From the database, fetch walls from the wall table.
-    # We only want walls with a room_id equal to the supplied id
+    database = get_database() 
     
     walls = get_database().execute(
         'SELECT w.id, room_id, w.name, paint_id, surface'
@@ -122,6 +120,7 @@ def create(r_id):
     """The view used to allow users to create new walls.
     the function is passed the room it will be contained in via its url.  
     """
+    
     # Fetch a dictionary of all paints in the paint table. 
     # This will be used to define a drop down menu in html. 
     paints = get_paint()
@@ -132,7 +131,7 @@ def create(r_id):
     shapes = ["Square", "Rectangle", "Parallelogram", "Trapezoid", "Triangle", "Ellipse", "Circle", "Semicircle"]
     
     if request.method == 'POST':
-        # Posts consist of a title and body
+        
         name = request.form['name']
         paint = request.form.get('paint')
         shape = request.form.get("shape") 
@@ -140,7 +139,6 @@ def create(r_id):
         # Stores any errors that may arise. 
         error = None
 
-        # A wall must be given a name
         if not name:
             error = 'A name is required.'
         
@@ -178,6 +176,10 @@ def create(r_id):
 @blueprint.route('/<int:r_id>/room/wall/create/<int:w_id><string:wall_shape>/details', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
 def wall_details(r_id, w_id, wall_shape):
+    """
+        This view is used to calculate the surface area of the wall once a shape has been passed.
+    """
+    
     surface_area = 0 
     
     dimensions = [0, 0, 0]
@@ -205,8 +207,7 @@ def wall_details(r_id, w_id, wall_shape):
                     surface_area = get_surface(w_id, surface_area)
     
                     database = get_database()
-                    # With that connection, update the house in the house table, with the supplied parameters
-                    # We update house WHERE its id equal to the supplied id. 
+
                     database.execute(
                         'UPDATE wall SET surface = ?, original_surface = ?'
                         ' WHERE id = ?',
@@ -225,8 +226,7 @@ def wall_details(r_id, w_id, wall_shape):
                     surface_area = get_surface(w_id, surface_area)
 
                     database = get_database()
-                    # With that connection, update the house in the house table, with the supplied parameters
-                    # We update house WHERE its id equal to the supplied id. 
+
                     database.execute(
                         'UPDATE wall SET surface = ?'
                         ' WHERE id = ?',
@@ -247,8 +247,7 @@ def wall_details(r_id, w_id, wall_shape):
                     surface_area = get_surface(w_id, surface_area)
 
                     database = get_database()
-                    # With that connection, update the house in the house table, with the supplied parameters
-                    # We update house WHERE its id equal to the supplied id. 
+
                     database.execute(
                         'UPDATE wall SET surface = ?'
                         ' WHERE id = ?',
@@ -270,14 +269,13 @@ def wall_details(r_id, w_id, wall_shape):
 @blueprint.route('/<int:r_id>/room/wall/<int:w_id>/update_name_paint', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def update_name_paint(r_id, w_id):
-    """This view is used to allow users to update their created houses.
-    It is passed the id of the house which the user wants to update
+    """
+        This view is used to allow users to update the name and paint of any existing wall .
     """
 
     # Retrieve a connection to the database
     database = get_database()    
-        # With that connection, update the house in the house table, with the supplied parameters
-        # We update house WHERE its id equal to the supplied id. 
+
     wall_name = get_database().execute(
         'SELECT name'
         ' FROM wall WHERE id = ?',
@@ -289,7 +287,7 @@ def update_name_paint(r_id, w_id):
     paints = get_paint()
 
     if request.method == 'POST':
-        # Retrieve a name for the house from the browser
+
         name = request.form['name']
         paint = request.form['paint']
         
@@ -306,8 +304,7 @@ def update_name_paint(r_id, w_id):
         if error is not None:
             flash(error)
         else:
-            # With that connection, update the house in the house table, with the supplied parameters
-            # We update house WHERE its id equal to the supplied id. 
+
             database.execute(
                 'UPDATE wall SET name = ?, paint_id = ?'
                 ' WHERE id = ?',
@@ -315,26 +312,19 @@ def update_name_paint(r_id, w_id):
             )
             database.commit()
             
-            # redirect the user back to the index
+
             return redirect(url_for('wall.index', r_id=r_id))
 
-    # If the house could not be updated, then redirect them back to the update page again
     return render_template('wall/update.html', wall=wall_name, w_id=w_id, r_id=r_id, paints=paints)
 
 @blueprint.route('/<int:r_id>/room/wall/<int:w_id>/update_shape', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def update_shape(r_id, w_id):
-    # An array of valid shapes. 
-    # Used to define a drop down menu in html
-    # Should swap to enum later
+
     shapes = ["Square", "Rectangle", "Parallelogram", "Trapezoid", "Triangle", "Ellipse", "Circle", "Semicircle"]
 
-    # Retrieve a connection to the database
     database = get_database()    
     
-    # With that connection, update the house in the house table, with the supplied parameters
-    # We update house WHERE its id equal to the supplied id. 
-
     wall_name = get_database().execute(
         'SELECT name'
         ' FROM wall WHERE id = ?',
@@ -345,22 +335,21 @@ def update_shape(r_id, w_id):
 
 
     if request.method == 'POST':
-        # Posts consist of a title and body
+
         shape = request.form.get("shape") 
         
-        # Stores any errors that may arise. 
+
         error = None
 
-        # A wall must be given a name
+
         if not shape:
             error = 'A shape must be chosen.'
  
-        # If there as an error then flash it, so it can be displayed by the page
+
         if error is not None:
             flash(error)
         else:            
-            # With that connection, update the house in the house table, with the supplied parameters
-            # We update house WHERE its id equal to the supplied id. 
+
             database.execute(
                 'UPDATE wall SET surface = ?, Shape = ?'
                 ' WHERE id = ?',
@@ -368,7 +357,6 @@ def update_shape(r_id, w_id):
             )
             database.commit()
             
-            # Redirect the user back to the index page
             return redirect(url_for('wall.wall_details', wall=wall_name, r_id=r_id, w_id=w_id, wall_shape=shape))
 
     # If it was unsucessful, then return the user back to the create page
@@ -377,15 +365,16 @@ def update_shape(r_id, w_id):
 @blueprint.route('/<int:r_id>/room/wall/<int:w_id>/delete', methods=('POST',))
 @login_required # Calls the login_required() function from authentication. Must be logged in
 def delete(r_id, w_id):
-    # Retrieves the house by the specified id
+    
+
     wall = get_wall(w_id, r_id)
     
-    # Get a connection to the database
+
     database = get_database()
   
     database.execute('DELETE FROM wall WHERE id = ?', (w_id,))
     database.commit()
-    # When a house has been deleted, redirect to the index
+
     return redirect(url_for('wall.index', r_id=r_id))
 
 #########################################################################################
@@ -393,7 +382,8 @@ def delete(r_id, w_id):
 #########################################################################################
 
 def get_paint():
-    """This function is used to retrieve a dictionary containing all of the paint from the paint database. 
+    """
+        This function is used to retrieve a dictionary containing all of the paint from the paint database. 
     """
     # Return a connection to the database 
     database = get_database()
@@ -421,20 +411,19 @@ def check_measurement_input(input):
     
 def get_wall(w_id, r_id, check_author=True):
     # Get a connection to the database
-    # Then search the database to see if a room exists which:
-    # Has the id of the selected room, and has a house_id equal to the supplied c_id
+    # Then search the database to see if a wall exists which:
+    # Has the id of the selected wall, and has a room_id equal to the supplied r_id
     wall = get_database().execute(
         'SELECT * FROM wall'
         ' WHERE id = ? AND room_id = ?',
         (w_id, r_id)
     ).fetchone()
 
-    # If the room does not exist:
-    # Which means that a room with the specified id, which is 'within' the specified house
+    # If the wall does not exist:
     if wall is None:
         abort(404, f"Wall id: {w_id} doesn't exist.") # abort will raise a special exception that returns HTTP status code
 
-    # If we want to check the house, and the house the room is within, is not the same as the house passed to it,
+    # If we want to check the wall, and the room the wall is within, is not the same as the room passed to it,
     # then abort with an error
     if check_author and wall['room_id'] != r_id:
         abort(403, "You are not the owner of this wall.")
@@ -442,6 +431,9 @@ def get_wall(w_id, r_id, check_author=True):
     return wall   
 
 def update_surface(w_id):
+    """
+        Called when we implement obstacles into a wall so that the surface area can be updated accordingly
+    """
     database = get_database()
 
     surfaces = database.execute(
