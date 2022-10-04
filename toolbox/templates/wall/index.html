@@ -23,18 +23,17 @@ loop.last is used inside Jinja to display a line after each posts, except the la
       <header>
         <div>
           <h1>{{ wall['name'] }}</h1>
-          {% for paint in paints %}
-            {% if wall['paint_id'] == paint['id'] %}
-              <b1>{{ paint['name'] }}</b1>
-            {% endif %}
-          {% endfor %}
-          <b1>{{ wall['surface'] }}</b1>
-          {% for obstacle in obstacles %}
-            {% if obstacle['wall_id'] == wall['id'] %}
-              <b1>{{ obstacle[wall['id']] }}</b1>
-            {% endif %}
-          {% endfor %}
-          <b1>{{ obstacles[wall['id']] }}</b1>
+            <div>
+              {% for paint in paints %}
+                {% if wall['paint_id'] == paint['id'] %}
+                  <p>Paint required: {{ paint['name'] }}</p>
+                {% endif %}
+              {% endfor %}
+              <p>Buckets required: {{ values_per_wall[wall['id']][1] }}</p>
+              <p>Cost for paint: {{ values_per_wall[wall['id']][0] }}</p>
+              <p>Surface area: {{ wall['surface'] }}</p>
+              <p>Num of obstacles: {{ obstacles[wall['id']] }}</p>
+            </div>
         </div>
         <a class="action" href="{{ url_for('obstacle.index', w_id=wall['id']) }}">View obstacles</a>
           <a class="action" href="{{ url_for('wall.update_name_paint', r_id=r_id, w_id=wall['id']) }}">Edit name/paint</a>

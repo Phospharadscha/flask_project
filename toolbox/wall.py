@@ -5,6 +5,7 @@
 from enum import Enum
 import math
 from tabnanny import check
+from tokenize import blank_re
 from flask import (
     Blueprint, flash, g, get_template_attribute, redirect, render_template, request, url_for
 )
@@ -109,8 +110,11 @@ def index(r_id):
 
     paints = get_paint()
     
+    # ID : [Price, number of buckets]
+    values_per_wall = get_values()
+    
     # Returns a command to render the specified template, and passes it the walls as a parameter. 
-    return render_template('wall/index.html', walls=walls, r_id=r_id, paints=get_paint(), obstacles=obstacles_per_wall)
+    return render_template('wall/index.html', walls=walls, r_id=r_id, paints=get_paint(), obstacles=obstacles_per_wall, values_per_wall=values_per_wall)
 
 @blueprint.route('/<int:r_id>/room/wall/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
@@ -396,7 +400,7 @@ def get_paint():
     
     # We want to fetch all the information from every paint in the paint table 
     paints = database.execute(
-        'SELECT id, name FROM paint'
+        'SELECT * FROM paint'
     ).fetchall()
     
     return paints
@@ -463,6 +467,34 @@ def update_surface(w_id):
         (surface, w_id)
     )
     database.commit()
+
+def get_values():
+    # ID : [Price, number of buckets]
+    values_per_wall = { 0 : [0, 0]}
+    
+    walls = get_database().execute(
+        'SELECT * FROM WALL'
+    ).fetchall()
+    
+    paints = get_paint()
+    
+    for wall in walls:
+        import math
+        
+        paint = get_database().execute(
+            'SELECT price, coverage, volume FROM paint'
+            ' WHERE id = ?',
+            (wall['paint_id'],)
+        ).fetchone()
+        
+        buckets_required = math.ceil((wall['surface'] / paint['coverage']) / paint['volume'])
+        if buckets_required == 0: buckets_required += 1
+        
+        cost = buckets_required * paint['price']
+        
+        values_per_wall[wall['id']] = [cost, buckets_required]
+    
+    return values_per_wall
 
 def get_surface(w_id, surface):
     database = get_database()

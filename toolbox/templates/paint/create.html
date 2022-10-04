@@ -15,11 +15,11 @@ This is requested in the blog blueprint-->
   <form method="post">
     <label for="name">Name:</label>
     <input name="name" id="name" value="{{ request.form['name'] }}" required>
-    <label for="price">Price:</label>
+    <label for="price">Price in pounds:</label>
     <input name="price" id="price" value="{{ request.form['price'] }}" required>
-    <label for="volume">Volume:</label>
+    <label for="volume">Volume in litres:</label>
     <input name="volume" id="volume" value="{{ request.form['volume'] }}" required>
-    <label for="coverage">Coverage:</label>
+    <label for="coverage">Coverage per litre in m^2:</label>
     <input name="coverage" id="coverage" value="{{ request.form['coverage'] }}" required>
     <input type="submit" value="Save">
   </form>
