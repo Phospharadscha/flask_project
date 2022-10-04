@@ -173,9 +173,6 @@ def get_values():
         # fetch the total cost, number of buckets, and paint values per wall 
         room_values =  room.get_values(rooms)
         
-        
-    
-    
 
 def get_house(id, check_author=True):
     """To update and delete houses we need to fetch them by id.
