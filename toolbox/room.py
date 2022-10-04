@@ -7,6 +7,10 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
+from toolbox import database
+
+from . import wall
+
 from toolbox.authentication import login_required
 from toolbox.database import get_database
 
@@ -55,8 +59,12 @@ def index(h_id):
         (h_id,)
     ).fetchone()
     
+    # Returns a dictionary ordered by the room id
+    # each room stores values on the total cost, paints required, and number of walls
+    room_values = get_values(rooms)
+    
     # Returns a command to render the specified template, and passes it the rooms as a parameter, the house id, and the name of the house. 
-    return render_template('room/index.html', rooms=rooms, house_id=h_id, h_name=house)
+    return render_template('room/index.html', rooms=rooms, house_id=h_id, h_name=house, room_values=room_values)
 
 @blueprint.route('/<int:h_id>/room/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
@@ -166,6 +174,37 @@ def delete(h_id, r_id):
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
+
+def get_values(rooms):
+    walls = get_database().execute(
+        'SELECT * FROM wall'
+    ).fetchall()
+    
+    values = wall.get_values() 
+    room_values = {}
+    
+    for room in rooms: 
+        total_cost = 0
+        number_of_walls = 0
+        paint_vals = {}
+        
+        for w in walls:      
+            if w['room_id'] == room['id']:
+                number_of_walls += 1
+                total_cost += values[w['id']][0]
+
+                p_id = w['paint_id']
+                if p_id not in paint_vals: 
+                    paint_vals[p_id] = values[w['id']][1]
+                else:
+                    paint_vals[p_id] += values[w['id']][1]
+
+        r_id = room['id']
+        room_values[r_id] = (total_cost, number_of_walls, paint_vals)
+    
+
+    return room_values
+
 
 def get_room(h_id, r_id, check_author=True):
     # Get a connection to the database

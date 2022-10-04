@@ -26,7 +26,7 @@ def test_register(client, app):
     response = client.post(
         '/authentication/register.html', data={'username': 'a', 'password': 'a'}
     )
-    assert response.headers["Location"] == "/authentication/login/html"
+    assert response.headers["Location"] == "auth.login"
 
 
     # Asser that we will find a user in the database with the username of 'a'

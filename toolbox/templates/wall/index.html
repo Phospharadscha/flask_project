@@ -30,8 +30,8 @@ loop.last is used inside Jinja to display a line after each posts, except the la
                 {% endif %}
               {% endfor %}
               <p>Buckets required: {{ values_per_wall[wall['id']][1] }}</p>
-              <p>Cost for paint: {{ values_per_wall[wall['id']][0] }}</p>
-              <p>Surface area: {{ wall['surface'] }}</p>
+              <p>Cost for paint: £{{ values_per_wall[wall['id']][0] }}</p>
+              <p>Surface area: {{ wall['surface'] }}m2</p>
               <p>Num of obstacles: {{ obstacles[wall['id']] }}</p>
             </div>
         </div>
