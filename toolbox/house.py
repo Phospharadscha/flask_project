@@ -28,6 +28,7 @@ blueprint = Blueprint('house', __name__)
 #########################################################################################
 
 @blueprint.route('/') # The '/' will lead to this function
+@login_required
 def index():
     """The Index will display all houses belonging to a specific user, as outlined above
     """
@@ -42,8 +43,9 @@ def index():
         ' ORDER BY h.id DESC'
     ).fetchall()
     
-    # Returns a command to render the specified template, and passes it the houses as a parameter. 
+
     return render_template('house/index.html', houses=houses)
+
 
 @blueprint.route('/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 

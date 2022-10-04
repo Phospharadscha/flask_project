@@ -167,7 +167,7 @@ def login_required(view):
         If they are loaded, then the originally requested view (page) is loaded as expected"""
         if g.user is None:
             # redirect them to the login page instead
-            return redirect(url_for('authentication.login'))
+            return redirect(url_for('auth.login'))
 
         # Return the expected view
         return view(**kwargs)
