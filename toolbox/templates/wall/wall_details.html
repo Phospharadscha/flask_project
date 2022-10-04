@@ -14,31 +14,31 @@ This is requested in the blog blueprint-->
 {% block content %}
   <form method="post">
     {% if wall_shape == 'square' %}
-        <label for="dim_one">Length:</label>
+        <label for="dim_one">Length in meters:</label>
         <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
     {% endif %}
     {% if wall_shape == 'circle' or wall_shape == 'semicircle' %}
-        <label for="dim_one">Radius:</label>
+        <label for="dim_one">Radius in meters:</label>
         <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
     {% endif %}
     {% if wall_shape == 'rectangle' or wall_shape == 'triangle' or wall_shape == 'parallelogram' %}
-        <label for="dim_one">Width:</label>
+        <label for="dim_one">Width in meters:</label>
         <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
-        <label for="dim_two">Height:</label>
+        <label for="dim_two">Height in meters:</label>
         <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
     {% endif %}
     {% if wall_shape == 'trapezoid' %}
-        <label for="dim_one">Bottom base:</label>
+        <label for="dim_one">Length of bottom base in meters:</label>
         <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
-        <label for="dim_two">Top base:</label>
+        <label for="dim_two">Length of top in meters:</label>
         <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
-        <label for="dim_three">Height:</label>
+        <label for="dim_three">Height in meters:</label>
         <input name='dim_three' id='dim_three' value="{{ request.form['dim_three'] }}" required>
     {% endif %}
     {% if wall_shape == 'ellipse' %}
-      <label for="dim_one">Horizontal radius:</label>
+      <label for="dim_one">Horizontal radius in meters:</label>
       <input name='dim_one' id='dim_one' value="{{ request.form['dim_one'] }}" required>
-      <label for="dim_two">Vertical Radius:</label>
+      <label for="dim_two">Vertical radius in meters:</label>
       <input name='dim_two' id='dim_two' value="{{ request.form['dim_two'] }}" required>
     {% endif %}
     <input type="submit" value="Next">
