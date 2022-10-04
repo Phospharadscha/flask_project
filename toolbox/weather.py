@@ -26,25 +26,42 @@ blueprint = Blueprint('weather', __name__)
 #########################################################################################
 
 
-@blueprint.route('/forecast', methods=['GET'])
+@blueprint.route('/forecast', methods=['GET', 'POST'])
 def get_weather():
-    target_city = request.args.get('city')
-
-    if target_city is None:
-        target_city = 'Bradford'
-
-    request_data = {}
-    request_data['q'] = target_city
-    request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
-    request_data['units'] = 'metric'
-
-    url_values = urllib.parse.urlencode(request_data)
-    url = 'http://api.openweathermap.org/data/2.5/forecast'
-    full_url = url + '?' + url_values
-    request_data = urllib.request.urlopen(full_url)
-
-    resp = Response(request_data)
-    resp.status_code = 200
+    target_city = request.form['city']
     
-    return render_template('weather/index.html', title='Is it a good day to paint?', data=json.loads(request_data.read().decode('utf8')))
+    if target_city is None:
+        target_city = 'London'
+
+
+    if request.method == 'POST':
+
+        
+        try:
+            request_data = {}
+            request_data['q'] = target_city
+            request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
+            request_data['units'] = 'metric'
+
+            url_values = urllib.parse.urlencode(request_data)
+            url = 'http://api.openweathermap.org/data/2.5/forecast'
+            request_data = urllib.request.urlopen(full_url)
+        except:
+            target_city = 'London'
+            
+            request_data = {}
+            request_data['q'] = target_city
+            request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
+            request_data['units'] = 'metric'
+
+            url_values = urllib.parse.urlencode(request_data)
+            url = 'http://api.openweathermap.org/data/2.5/forecast'
+            full_url = url + '?' + url_values
+            
+            request_data = urllib.request.urlopen(full_url)
+        else: 
+            resp = Response(request_data)
+            resp.status_code = 200
+        
+    return render_template('weather/index.html', title=f'Weather for: {target_city.title()}', data=json.loads(request_data.read().decode('utf8')))
 
