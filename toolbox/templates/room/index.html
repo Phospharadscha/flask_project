@@ -25,8 +25,11 @@ loop.last is used inside Jinja to display a line after each posts, except the la
           <h1>{{ room['name'] }}</h1>
         </div>
         <div>
-          <p>Cost of room: £{{ room_values[room['id']][0] }}</p>
+          <p>Total cost of room: £{{ room_values[room['id']][0] }}</p>
           <p>Num of walls: {{ room_values[room['id']][1] }}</p>
+          {% for key, value in room_values[room['id']][2].items() %}
+            <p>Paint name: {{ key }}, requires: {{ value }} buckets</p>
+          {% endfor %}
         </div>
         {% if house_id == room['house_id'] %}
           <a class="action" href="{{ url_for('wall.index', r_id=room['id']) }}">View walls</a>

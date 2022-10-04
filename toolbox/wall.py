@@ -482,7 +482,7 @@ def get_values():
         import math
         
         paint = get_database().execute(
-            'SELECT price, coverage, volume FROM paint'
+            'SELECT name, price, coverage, volume FROM paint'
             ' WHERE id = ?',
             (wall['paint_id'],)
         ).fetchone()
@@ -492,7 +492,7 @@ def get_values():
         
         cost = buckets_required * paint['price']
         
-        values_per_wall[wall['id']] = [cost, buckets_required]
+        values_per_wall[wall['id']] = [cost, buckets_required, paint['name']]
     
     return values_per_wall
 

@@ -36,20 +36,36 @@ def get_weather():
     
     if target_city is None:
         target_city = 'London'
-    
-    request_data = {}
-    request_data['q'] = target_city
-    request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
-    request_data['units'] = 'metric'
-    url_values = urllib.parse.urlencode(request_data)
-    url = 'http://api.openweathermap.org/data/2.5/forecast'
-    full_url = url + '?' + url_values
-    request_data = urllib.request.urlopen(full_url)
-    
-    resp = Response(request_data)
-    resp.status_code = 200
+    try:
+        request_data = {}
+        request_data['q'] = target_city
+        request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
+        request_data['units'] = 'metric'
+        url_values = urllib.parse.urlencode(request_data)
+        url = 'http://api.openweathermap.org/data/2.5/forecast'
+        full_url = url + '?' + url_values
+        request_data = urllib.request.urlopen(full_url)
 
-    return render_template('weather/index.html', title=f'Weather for: {target_city}', data=json.loads(request_data.read().decode('utf8')))
+        resp = Response(request_data)
+        resp.status_code = 200
+        
+        return render_template('weather/index.html', title=f'Weather for: {target_city}', data=json.loads(request_data.read().decode('utf8')))
+    except:
+        target_city = 'London'
+        
+        request_data = {}
+        request_data['q'] = target_city
+        request_data['appid'] = '031f7e7f165f2e7c24de04b9358e39f6'
+        request_data['units'] = 'metric'
+        url_values = urllib.parse.urlencode(request_data)
+        url = 'http://api.openweathermap.org/data/2.5/forecast'
+        full_url = url + '?' + url_values
+        request_data = urllib.request.urlopen(full_url)
+
+        resp = Response(request_data)
+        resp.status_code = 200
+        
+        return render_template('weather/index.html', title=f'Weather for: {target_city}', data=json.loads(request_data.read().decode('utf8')))
     
 
 

@@ -192,12 +192,12 @@ def get_values(rooms):
             if w['room_id'] == room['id']:
                 number_of_walls += 1
                 total_cost += values[w['id']][0]
-
-                p_id = w['paint_id']
-                if p_id not in paint_vals: 
-                    paint_vals[p_id] = values[w['id']][1]
+                
+                paint_name = values[w['id']][2]
+                if paint_name not in paint_vals: 
+                    paint_vals[paint_name] = values[w['id']][1]
                 else:
-                    paint_vals[p_id] += values[w['id']][1]
+                    paint_vals[paint_name] += values[w['id']][1]
 
         r_id = room['id']
         room_values[r_id] = (total_cost, number_of_walls, paint_vals)

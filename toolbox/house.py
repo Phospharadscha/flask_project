@@ -7,6 +7,8 @@ from flask import (
 )
 from werkzeug.exceptions import abort
 
+from . import room
+
 from toolbox.authentication import login_required
 from toolbox.database import get_database
 
@@ -45,7 +47,6 @@ def index():
     
 
     return render_template('house/index.html', houses=houses)
-
 
 @blueprint.route('/create', methods=('GET', 'POST'))
 @login_required # Calls the login_required() function from authentication. Must be logged in. 
@@ -157,6 +158,24 @@ def delete(id):
 #########################################################################################
 ######################################## Functions ######################################
 #########################################################################################
+
+def get_values():
+    houses = get_database().execute(
+        'SELECT * FROM house'
+    ).fetchall()
+    
+    for house in houses: 
+        rooms = get_database().execute(
+            'SELECT * FROM room WHERE house_id = ?',
+            (house['id'],)
+        ).fetchall()
+    
+        # fetch the total cost, number of buckets, and paint values per wall 
+        room_values =  room.get_values(rooms)
+        
+        
+    
+    
 
 def get_house(id, check_author=True):
     """To update and delete houses we need to fetch them by id.

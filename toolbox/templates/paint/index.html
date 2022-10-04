@@ -24,6 +24,11 @@ loop.last is used inside Jinja to display a line after each posts, except the la
         <div>
           <h1>{{ paint['name'] }}</h1>
         </div>
+        <div>
+          <p>Cost: £{{ paint['price'] }}</p>
+          <p>Volume per bucket: {{ paint['price'] }} litres</p>
+          <p>Coverage: {{ paint['coverage'] }}m2 per litre</p>
+        </div>
         {% if g.user['id'] == 1 %}
         <a class="action" href="{{ url_for('paint.update', p_id=paint['id']) }}">Edit</a>
         {% endif %}
