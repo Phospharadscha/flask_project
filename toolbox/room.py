@@ -205,7 +205,6 @@ def get_values(rooms):
 
     return room_values
 
-
 def get_room(h_id, r_id, check_author=True):
     # Get a connection to the database
     # Then search the database to see if a room exists which:
